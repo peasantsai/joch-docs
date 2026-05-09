@@ -1,0 +1,27 @@
+site_name: Joch Docs
+site_description: Joch agent control-plane architecture and product documentation.
+site_url: https://peasantsai.github.io/joch-docs/
+repo_url: https://github.com/peasantsai/joch-docs
+repo_name: peasantsai/joch-docs
+docs_dir: docs
+site_dir: site
+theme:
+  name: mkdocs
+  nav_style: dark
+nav:
+  - Home: index.md
+  - Architecture:
+      - State Portability: architecture/state-portability.md
+      - Service Architecture: architecture/service-architecture.md
+  - Specs:
+      - Resource Model: specs/resource-model.md
+  - Platform:
+      - Kubernetes Strategy: platform/kubernetes.md
+  - Product:
+      - Brand: product/brand.md
+      - Repository Strategy: product/repositories.md
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
