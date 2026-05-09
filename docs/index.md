@@ -20,7 +20,7 @@ Joch is an agent control-plane concept: it owns agent identity, lifecycle, memor
 
     Describe Kubernetes-style resource kinds for agents, models, memory, tools, execution, policy, guardrails, budgets, traces, and artifacts.
 
-    [Explore the specs](specs/resource-model.md)
+    [Explore the specs](specs/index.md)
 
 -   :material-kubernetes: **Kubernetes Strategy**
 

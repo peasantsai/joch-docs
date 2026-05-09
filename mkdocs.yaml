@@ -63,7 +63,38 @@ nav:
       - State Portability: architecture/state-portability.md
       - Service Architecture: architecture/service-architecture.md
   - Specs:
+      - Overview: specs/index.md
       - Resource Model: specs/resource-model.md
+      - Kubernetes:
+          - Overview: specs/kubernetes/index.md
+          - Agent: specs/kubernetes/agent.md
+          - Model: specs/kubernetes/model.md
+          - Personality: specs/kubernetes/personality.md
+          - Prompt: specs/kubernetes/prompt.md
+          - Skill: specs/kubernetes/skill.md
+          - Tool: specs/kubernetes/tool.md
+          - MCPServer: specs/kubernetes/mcpserver.md
+          - Memory: specs/kubernetes/memory.md
+          - RAG: specs/kubernetes/rag.md
+          - KnowledgeSource: specs/kubernetes/knowledge-source.md
+          - Plan: specs/kubernetes/plan.md
+          - ExecutionLoop: specs/kubernetes/execution-loop.md
+          - Execution: specs/kubernetes/execution.md
+          - Deployment: specs/kubernetes/deployment.md
+          - Policy: specs/kubernetes/policy.md
+          - Guardrail: specs/kubernetes/guardrail.md
+          - Trace: specs/kubernetes/trace.md
+          - Artifact: specs/kubernetes/artifact.md
+          - Secret: specs/kubernetes/secret.md
+          - Budget: specs/kubernetes/budget.md
+          - Eval: specs/kubernetes/eval.md
+          - Environment: specs/kubernetes/environment.md
+          - Team / Namespace: specs/kubernetes/team-namespace.md
+          - ToolCall: specs/kubernetes/toolcall.md
+          - Handoff: specs/kubernetes/handoff.md
+          - Approval: specs/kubernetes/approval.md
+          - Conversation: specs/kubernetes/conversation.md
+          - StateCheckpoint: specs/kubernetes/state-checkpoint.md
   - Platform:
       - Kubernetes Strategy: platform/kubernetes.md
   - Product:
