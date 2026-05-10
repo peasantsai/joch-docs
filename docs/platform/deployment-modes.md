@@ -1,79 +1,70 @@
 # Deployment Modes
 
-Kubernetes should not be mandatory for every user.
+Joch supports four deployment modes. The same resource specs work across all of them — only the runtime adapter changes.
 
-The likely audience includes:
+## Local
 
-```text
-Solo developers
-Local-first hackers
-Small teams
-CI/CD users
-Enterprise platform teams
-```
-
-Joch should support two primary modes.
-
-## Local Mode
-
-Local mode should feel lightweight:
+For developers. Single process, SQLite store, local files, no Kubernetes.
 
 ```bash
+brew install joch
 joch up
-joch apply -f agent.yaml
-joch run research-agent
+joch apply -f examples/support-triage.yaml
+joch run support-triage "Triage incoming queue"
 ```
 
-Under the hood, it can use:
+Best for fast iteration, prototyping, and example agents.
 
-```text
-SQLite/Postgres
-Local worker process
-Local MCP servers
-Docker optional
-```
+## Docker Compose
 
-This mode is for development, demos, and quick iteration.
-
-## Cluster Mode
-
-Cluster mode should install the production control plane:
+For small teams and self-hosted deployments. Postgres store, Redis event bus, MinIO artifacts, OpenTelemetry collector.
 
 ```bash
-joch install --cluster
-joch apply -f agent.yaml
-joch deploy research-agent --env prod
+joch init docker-compose
+docker compose up -d
+joch context use docker
+joch apply -f .
 ```
 
-Under the hood, it should use:
+Best for team dev environments, CI smoke tests, and demos.
 
-```text
-Kubernetes CRDs
-Controllers
-Jobs
-Deployments
-Secrets
-Services
-NetworkPolicies
-OpenTelemetry
+## Kubernetes
+
+For production. Native CRDs, Helm chart, controllers, NetworkPolicies, ServiceMonitor, autoscaling.
+
+```bash
+helm install joch joch/joch -n joch-system --create-namespace
+kubectl apply -f .
 ```
 
-This mode is for production.
+Best for multi-tenant, scale-out, governed production fleets.
 
-## Familiar Pattern
+## Managed SaaS + customer runtime
 
-The model mirrors a pattern developers already understand:
+For organizations that want Joch's UI, traces, and ABOM hosted, but tools, memory, and provider calls inside the customer environment.
 
 ```text
-Docker Compose locally
-Kubernetes in production
+joch Cloud control plane (multi-tenant)
+        │ secure tunnel / API
+        ▼
+customer runtime plane (Kubernetes / Docker / VM)
+```
+
+Best for regulated industries, EU residency, and teams that do not want to operate the control plane.
+
+## Familiar pattern
+
+The model mirrors the pattern engineering teams already understand:
+
+```text
+Local                Docker Compose         Kubernetes / SaaS
+prototyping          team dev / CI          production
 ```
 
 For Joch:
 
 ```text
-Joch local for development
-Joch on Kubernetes for production
+joch local           joch docker            joch on Kubernetes / Joch Cloud
 ```
 
-The same resource specs should work in both modes.
+The same `joch apply -f .` and the same resource specs work in each mode.

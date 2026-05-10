@@ -1,19 +1,13 @@
 # Product Strategy
 
-Joch should not clone Kubernetes. It should define an agent-native control plane that can use Kubernetes as a backend.
+The platform-level product strategy is small and disciplined: define resources once, run them anywhere, and grow with the SDK ecosystem rather than fight it.
 
-## Recommended Path
+## The path
 
-The product strategy should be:
-
-```text
-1. Define Joch resource specs independent of Kubernetes.
-2. Implement a local backend first for fast iteration.
-3. Implement a Kubernetes backend using CRDs and controllers.
-4. Make the CLI backend-agnostic.
-```
-
-Example:
+1. **Define Joch resources independent of any single backend.** Records are framework-agnostic and runtime-agnostic.
+2. **Build the local backend first** for fast iteration, demos, and CI.
+3. **Build the Kubernetes backend** with CRDs, an operator, and a Helm chart for production.
+4. **Keep the CLI backend-agnostic.** Same specs, same commands, different context.
 
 ```bash
 joch context use local
@@ -23,41 +17,34 @@ joch context use prod-k8s
 joch apply -f agent.yaml
 ```
 
-Same spec, different backend.
+Same spec, different runtime adapter.
 
-## Why This Works
+## Why this works
 
-This gives Joch:
+- Fast local development without infrastructure overhead.
+- Production-grade Kubernetes operations without a separate model.
+- One resource catalog across environments.
+- Room for managed SaaS without forking the model.
+- Agent-native UX instead of raw infrastructure UX.
 
-```text
-Fast local development
-Production-grade Kubernetes operations
-One resource model across environments
-Room for managed SaaS later
-Agent-native UX instead of raw infrastructure UX
-```
-
-It also keeps the CLI focused:
+The CLI stays focused on the agent intent:
 
 ```bash
-joch run research-agent --task "Analyze this market"
+joch run support-triage --task "Triage the queue"
 ```
 
-Not:
+— not on the infrastructure plumbing:
 
 ```bash
-kubectl create job research-agent-run-123 \
-  --image=agent-runtime \
-  --env=MODEL=gpt-5 \
-  --env=PERSONALITY_CONFIGMAP=...
+kubectl create job support-triage-run-123 \
+  --image=joch-worker \
+  --env=JOCH_EXECUTION_ID=...
 ```
 
-## Final Position
-
-The right design is:
+## Final position
 
 ```text
-Kubernetes underneath.
+Kubernetes (or Docker, or local) underneath.
 Joch above it.
 Agent resources at the product boundary.
 Infrastructure resources behind adapters and controllers.

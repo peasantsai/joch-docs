@@ -1,111 +1,35 @@
 # State Portability
 
-## Core principle
+> Treat OpenAI, Anthropic, Google, Microsoft Foundry, and local model servers as **execution backends**, not as owners of state.
 
-Treat OpenAI, Claude, and other vendors as **execution backends**, not as owners of state.
+State portability is the architectural principle that makes the [Portability pillar](../pillars/portability.md) possible. The control plane owns conversation, memory, tool, and runtime state. Provider adapters render that state into each vendor's request format. The persisted state is always Joch-native.
 
-So instead of this:
+## Layers of state
 
-```text
-Conversation lives inside OpenAI thread
-↓
-Need to switch to Claude
-↓
-Try to translate OpenAI thread directly
-```
-
-I would do this:
+A mid-conversation provider switch must preserve five distinct layers, not just the chat transcript:
 
 ```text
-joch-owned state store
-↓
-Provider adapter renders state for OpenAI
-↓
-Provider adapter renders same state for Claude
+1. Message history       what was said
+2. Tool-call history     what was done
+3. Working memory        scratchpad / task state / active goals
+4. Long-term memory      vector / RAG / preferences / project knowledge
+5. Runtime state         current step / retries / pending approvals / locks
 ```
 
-That means `joch` owns:
+Migrating only chat messages destroys the other four layers. Joch keeps all five durable.
 
-```yaml
-conversation_id: conv_123
-agent_id: researcher
-model_backend: openai:gpt-5.1
-messages:
-  - role: user
-    content:
-      - type: text
-        text: "Research agent fleet managers"
-  - role: assistant
-    content:
-      - type: text
-        text: "Here are the key findings..."
-    tool_calls:
-      - id: call_1
-        tool: web.search
-        args:
-          query: "agent fleet management"
-    metadata:
-      provider: openai
-      model: gpt-5.1
-memory_refs:
-  - mem://project/joch/market-notes
-artifacts:
-  - artifact://report/market-analysis-v1
-policies:
-  allowed_tools:
-    - web.search
-    - github.read
-    - filesystem.write
-```
+## Canonical message format
 
-Then the OpenAI adapter and Claude adapter translate this into their own message formats.
-
-## The hard part: state is not just messages
-
-A mid-conversation switch has at least five state layers:
-
-1. **Message history**
-2. **Tool call history**
-3. **Working memory**
-4. **Long-term memory**
-5. **Execution state**
-
-The mistake would be to only migrate chat messages. That loses too much.
-
-I would split state like this:
-
-```text
-Conversation transcript
-  Durable, append-only, vendor-neutral
-
-Working memory
-  Summaries, task state, scratchpad, active goals
-
-Long-term memory
-  Vector/RAG stores, user preferences, project knowledge
-
-Tool state
-  Tool calls, outputs, permissions, side effects
-
-Runtime state
-  Current step, retries, pending approvals, locks
-```
-
-The transcript is important, but the **working memory** is what makes migration reliable.
-
-## Use a canonical message format
-
-I would define an internal format similar to:
+The internal format is intentionally simple:
 
 ```ts
-type AgentMessage =
-  | {
-      role: "system" | "user" | "assistant" | "tool";
-      content: ContentBlock[];
-      toolCalls?: ToolCall[];
-      toolResults?: ToolResult[];
-      vendorMetadata?: Record<string, unknown>;
-    };
+type AgentMessage = {
+  role: "system" | "user" | "assistant" | "tool";
+  content: ContentBlock[];
+  toolCalls?: ToolCall[];
+  toolResults?: ToolResult[];
+  vendorMetadata?: Record<string, unknown>;
+};
 
 type ContentBlock =
   | { type: "text"; text: string }
@@ -126,24 +50,22 @@ type ToolResult = {
 };
 ```
 
-Important: I would preserve vendor-specific metadata, but never depend on it.
+`vendorMetadata` is preserved but never depended on:
 
 ```yaml
 vendorMetadata:
   openai:
     response_id: resp_abc
-    model: gpt-5.1
+    model: gpt-5.5-thinking
   anthropic:
     message_id: msg_xyz
 ```
 
-That allows debugging and replay, while keeping the actual state portable.
+This preserves debug fidelity without coupling the canonical state to a vendor.
 
-## Tool calls need special treatment
+## Tool-call state
 
-Tool calls are one of the biggest migration hazards.
-
-Different vendors represent tool use differently. So I would normalize tool calls into an `joch` event log:
+Tool calls are the single biggest hazard during a switch. Joch persists every tool call as an event:
 
 ```text
 event: tool.call.requested
@@ -153,202 +75,126 @@ args: { repo: "org/joch", query: "memory migration" }
 event: tool.call.completed
 result_ref: artifact://tool-results/abc123
 status: success
+side_effects: read_only
 ```
 
-When switching from OpenAI to Claude, Claude does not need to replay the tool call unless necessary. It can receive a compact summary:
+When a switch happens, the new provider does **not** replay tool calls. It receives a compact summary:
 
 ```text
 Earlier in the task, the agent called github.search_issues with query X.
-The result was Y.
-The relevant artifact is available at artifact://tool-results/abc123.
+The result was stored as artifact://tool-results/abc123.
 ```
 
-This prevents duplicate side effects.
-
-For non-idempotent tools, I would mark them explicitly:
+Side-effecting calls are flagged so the new provider cannot accidentally repeat them:
 
 ```yaml
-tool_call:
+toolCall:
   id: call_123
-  idempotent: false
-  side_effects:
-    - sent_email
-    - created_ticket
+  idempotencyKey: zendesk-create-12345
+  sideEffects:
+    level: external_write
+    idempotent: false
 ```
 
-The new backend must not repeat those unless a policy permits it.
+## Migration checkpoint
 
-## I would introduce a migration checkpoint
-
-When switching providers, `joch` should not simply dump the full conversation into Claude. It should create a **migration checkpoint**:
+A provider switch creates a deterministic [`StateCheckpoint`](../specs/kubernetes/state-checkpoint.md):
 
 ```yaml
-checkpoint_id: chk_456
-conversation_id: conv_123
-from_backend: openai:gpt-5.1
-to_backend: anthropic:claude-sonnet
-summary:
-  user_goal: "Design state persistence for joch"
-  current_task: "Explain migration strategy"
-  decisions_made:
-    - "Use vendor-neutral state as source of truth"
-    - "Persist tool calls as event log"
-    - "Avoid replaying side-effectful tools"
-  open_questions:
-    - "How much vendor metadata should be retained?"
-  relevant_memory_refs:
-    - mem://project/joch/state-model
-  active_artifacts:
+apiVersion: joch.dev/v1alpha1
+kind: StateCheckpoint
+metadata:
+  name: chk-456
+spec:
+  conversationRef: { name: conv-123 }
+  fromBackend: openai:gpt-5-thinking
+  toBackend: anthropic:claude-sonnet
+  summary:
+    userGoal: "Design state persistence for Joch"
+    currentTask: "Explain migration strategy"
+    decisions:
+      - "Use vendor-neutral state as the source of truth"
+      - "Persist tool calls as event log"
+      - "Avoid replaying side-effectful tools"
+    openQuestions:
+      - "How much vendor metadata to retain"
+  activeArtifacts:
     - artifact://design/state-persistence-draft
+  relevantMemoryRefs:
+    - mem://project/joch/state-model
 ```
 
-Then the Claude adapter receives:
+The new backend then receives:
 
 ```text
-System/personality config
+system / personality / policy config
 + migration checkpoint
 + recent message window
 + relevant memory snippets
 + tool registry
 ```
 
-Not necessarily the entire raw history.
+Not the entire raw transcript.
 
-## Context window strategy
+## Tiered context reconstruction
 
-A provider switch may also mean switching context window size, tokenization, or modality support.
-
-So I would use a tiered context reconstruction strategy:
+Different providers have different context window sizes, tokenizers, and modality support. Joch reconstructs context in tiers:
 
 ```text
-1. Always include system/personality/policy config
-2. Include migration checkpoint
-3. Include active task state
-4. Include last N turns
+1. Always include system / policy / personality config
+2. Include the migration checkpoint
+3. Include the active task state
+4. Include the last N turns
 5. Retrieve relevant long-term memory
 6. Attach artifacts by reference
-7. Include older transcript only if needed
+7. Include older transcript only if budget allows and needed
 ```
 
-This gives the new model enough continuity without requiring a brittle one-to-one transcript migration.
+This gives the target model continuity without forcing a brittle one-to-one transcript transfer.
 
-## Personality/state separation
+## Capability validation
 
-For `joch`, I would keep these separate:
-
-```text
-personality.md     → how the agent behaves
-mission.md         → what the agent is trying to accomplish
-memory store       → what the agent knows
-conversation log   → what has happened
-runtime state      → what is currently in progress
-```
-
-That matters because the agent may switch from OpenAI to Claude, but the **agent identity** should remain stable.
-
-So the user experiences:
-
-```text
-Same agent, different engine.
-```
-
-Not:
-
-```text
-New chatbot pretending to remember the old one.
-```
-
-## What happens during the actual switch
-
-A command might look like:
-
-```bash
-joch agents switch researcher \
-  --from openai:gpt-5.1 \
-  --to anthropic:claude-sonnet \
-  --conversation conv_123
-```
-
-Internally:
-
-```text
-1. Freeze current conversation state
-2. Flush pending tool results
-3. Generate migration checkpoint
-4. Validate target model capabilities
-5. Rebuild context for target provider
-6. Start next turn with new backend
-7. Append migration event to audit log
-```
-
-The audit log would show:
-
-```yaml
-event: backend.switched
-agent: researcher
-conversation: conv_123
-from: openai:gpt-5.1
-to: anthropic:claude-sonnet
-checkpoint: chk_456
-reason: cost_policy
-timestamp: 2026-05-09T...
-```
-
-## Handling model capability mismatch
-
-Provider switching is not always safe. The target backend may lack:
-
-```text
-vision
-long context
-JSON mode
-computer use
-specific tool-calling semantics
-structured output guarantees
-reasoning traces
-```
-
-So I would add a compatibility check:
+Provider switches are not always safe. The target backend may lack vision, structured output, computer use, long context, JSON-strict mode, or specific tool-calling semantics. Joch validates capabilities before committing:
 
 ```bash
 joch agents switch researcher --to claude-sonnet --dry-run
 ```
-
-Example output:
 
 ```text
 Compatibility check:
 ✓ Text conversation supported
 ✓ MCP tools supported
 ✓ 200k context sufficient
-⚠ JSON schema strict mode differs
-⚠ Previous model used image input; target model supports images but adapter must transform format
-✗ Computer-use tool unavailable
+⚠ JSON schema strict mode differs (loose-parse fallback)
+⚠ Previous turn used image input; image format will be transformed
+✗ Computer-use tool unavailable; tool will be removed for this conversation
 ```
 
-Then policies decide whether to allow the switch.
+Policy decides whether warnings or failures gate the switch. See [Model Router](model-router.md).
 
 ## Storage model
 
-I would probably persist state using an event-sourced model:
+Conversation state is event-sourced:
 
 ```text
-ConversationEvents
-AgentStateSnapshots
-ToolCallEvents
-MemoryReferences
-ArtifactReferences
-ProviderMetadata
+ConversationEvents       append-only message + tool events
+StateCheckpoints         materialized summaries used by migrations
+MemoryReferences         pointers to memory store items
+ArtifactReferences       pointers to artifact store items
+ProviderMetadata         vendor-specific debug data, never source-of-truth
 ```
 
-Event sourcing is useful because we can reconstruct the state for any backend and audit what happened.
-
-A simplified schema:
+A simplified relational schema:
 
 ```sql
-conversations(id, agent_id, created_at, current_backend)
+conversations (
+  id,
+  agent_id,
+  current_backend,
+  created_at
+);
 
-conversation_events(
+conversation_events (
   id,
   conversation_id,
   sequence_number,
@@ -357,9 +203,9 @@ conversation_events(
   provider,
   model,
   created_at
-)
+);
 
-state_checkpoints(
+state_checkpoints (
   id,
   conversation_id,
   summary,
@@ -367,9 +213,9 @@ state_checkpoints(
   memory_refs_json,
   artifact_refs_json,
   created_at
-)
+);
 
-tool_events(
+tool_events (
   id,
   conversation_id,
   tool_name,
@@ -379,12 +225,12 @@ tool_events(
   idempotency_key,
   side_effect_level,
   created_at
-)
+);
 ```
 
-## The key abstraction
+Event sourcing lets Joch reconstruct state for any backend and audit exactly what happened.
 
-I would make the central API something like:
+## The central abstraction
 
 ```ts
 interface AgentBackendAdapter {
@@ -394,36 +240,20 @@ interface AgentBackendAdapter {
 }
 ```
 
-Then OpenAI, Claude, Gemini, local models, and future providers become adapters.
+OpenAI, Anthropic, Google, Microsoft, and local models become adapters. The persisted state is always **Joch-native**, never `OpenAI-native`, `Claude-native`, or `LangGraph-native`.
 
-The persisted state remains:
+## The largest design rule
 
-```text
-joch-native
-```
+> **Never migrate state by asking one model to summarize itself without validation.**
 
-not:
+It is tempting and dangerous. The correct flow is:
 
 ```text
-OpenAI-native
-Claude-native
-LangGraph-native
-```
-
-## The biggest design rule
-
-**Never migrate state by asking one model to summarize itself without validation.**
-
-That is tempting, but dangerous.
-
-A better flow:
-
-```text
-1. Deterministic extraction from event log
+1. Deterministic extraction from the event log
 2. Optional model-generated summary
 3. Schema validation
-4. Human/auditable checkpoint
+4. Auditable checkpoint
 5. Target-provider reconstruction
 ```
 
-The model can help compress state, but the control plane owns the truth.
+The model can help compress state. The control plane owns the truth.

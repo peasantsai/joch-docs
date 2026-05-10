@@ -1,25 +1,6 @@
 # Platform
 
-Joch should use Kubernetes as an infrastructure backend, not as the product abstraction exposed to every user.
-
-The platform model is:
-
-```text
-Use Kubernetes as the infrastructure substrate.
-Build Joch as the agent control plane above it.
-```
-
-Not:
-
-```text
-Rebuild Kubernetes from scratch.
-```
-
-And not:
-
-```text
-Force users to model agents directly as Pods, Deployments, ConfigMaps, and Jobs.
-```
+Joch's "platform" section explains where Kubernetes fits underneath Joch and how the deployment story works. The primary architectural treatment lives in [Architecture](../architecture/index.md); these pages focus on the operations side: how to install, where Kubernetes ends, and how local / Docker / cluster modes compose.
 
 ## Sections
 
@@ -29,31 +10,23 @@ Force users to model agents directly as Pods, Deployments, ConfigMaps, and Jobs.
 
     ---
 
-    Explain why Kubernetes is useful underneath Joch, and why it is not enough as the agent product model.
+    Why Kubernetes is the right substrate underneath Joch, and why raw Kubernetes is not sufficient as the agent product surface.
 
     [Read the Kubernetes role](kubernetes.md)
-
--   :material-sitemap-outline: **Joch Control Plane**
-
-    ---
-
-    Define the domain-specific layer that understands agents, models, tools, memory, policy, and execution.
-
-    [Review the control plane](control-plane.md)
 
 -   :material-state-machine: **CRDs and Controllers**
 
     ---
 
-    Show how Kubernetes custom resources and controllers can implement the production backend.
+    How Joch resources can be implemented as Kubernetes CRDs with operators, and what controllers reconcile.
 
-    [Open the CRD design](crds-controllers.md)
+    [Read the CRD design](crds-controllers.md)
 
 -   :material-source-branch: **Deployment Modes**
 
     ---
 
-    Separate local developer mode from cluster production mode without changing the resource specs.
+    Local developer mode, Docker Compose, Kubernetes, and managed SaaS — same resource specs, different runtime.
 
     [Compare deployment modes](deployment-modes.md)
 
@@ -61,31 +34,27 @@ Force users to model agents directly as Pods, Deployments, ConfigMaps, and Jobs.
 
     ---
 
-    Keep the CLI backend-agnostic and let the same specs work locally, in clusters, and later in managed SaaS.
+    Backend-agnostic CLI, the same specs across environments, room for managed SaaS without forking the model.
 
     [Read the strategy](product-strategy.md)
 
 </div>
 
-## Platform Rule
+## Platform rule
 
-Users should describe agent intent. Joch should compile that intent into the right infrastructure objects for the selected backend.
+> Users describe agent intent. Joch compiles that intent into the right infrastructure objects for the selected backend.
 
 ```text
-User-facing:
-  Agent, Skill, Model, Memory, Execution, ToolCall, Policy
-
-Control-plane:
-  Joch controllers and compilers
-
-Infrastructure-facing:
-  Kubernetes Jobs, Deployments, Secrets, Services, ConfigMaps
+User-facing            Agent, FrameworkAdapter, Tool, MCPServer, Memory, Policy, Eval, ...
+Control-plane          Joch controllers and compiler
+Infrastructure-facing  Kubernetes Jobs, Deployments, Services, Secrets, ConfigMaps,
+                       or Docker containers, or local processes
 ```
 
-The user should run:
+Operators run:
 
 ```bash
-joch run research-agent --task "Analyze this market"
+joch run support-triage --task "Triage the queue"
 ```
 
-They should not need to manually construct a Kubernetes Job with model, prompt, memory, and policy configuration wired together by hand.
+— not handwritten Kubernetes Jobs with model, prompt, memory, policy, and trace export wired together.
