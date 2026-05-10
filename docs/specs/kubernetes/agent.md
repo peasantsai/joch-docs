@@ -1,101 +1,64 @@
 # Agent
 
-Kubernetes-style YAML resource specification for Joch `Agent` resources.
+The `Agent` resource is the framework-agnostic record of an agent that Joch operates. The actual agent code lives in OpenAI Agents SDK, Claude Agent SDK, Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, or custom Python / TypeScript code, and is connected to Joch through a [`FrameworkAdapter`](framework-adapter.md).
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## Agent spec
-
-An `Agent` is the identity and behavior contract. It should not be tied to one model provider.
+## Spec
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Agent
 metadata:
-  name: research-agent
-  namespace: default
+  name: support-triage
+  namespace: support-platform
   labels:
-    role: researcher
-    tier: production
+    owner: support-platform
+    env: prod
+    role: triage
 spec:
-  displayName: Research Agent
-
+  displayName: Support Triage
   description: >
-    Performs market research, summarizes findings, and creates structured reports.
+    Routes incoming Zendesk tickets, drafts replies, and escalates
+    to human reviewers when an SLA is at risk.
 
-  modelRef:
-    name: gpt-5-thinking
-    fallbackRefs:
-      - claude-sonnet
-      - gemini-pro
+  framework:
+    adapterRef:
+      name: openai-agents-sdk
+    entrypoint: ./agents/support_triage.py
+    pythonModule: support.agents.triage:agent
+    image: ghcr.io/example/support-triage:1.4.0
 
-  personalityRef:
-    name: pragmatic-researcher
-
-  systemPromptRef:
-    name: research-agent-system
-
-  skills:
-    - name: web-research
-    - name: summarize-documents
-    - name: cite-sources
+  modelRoute:
+    routeRef:
+      name: research-default
 
   tools:
-    - name: web.search
-    - name: browser.open
-    - name: filesystem.write
+    - name: zendesk.search
+    - name: zendesk.create_ticket
+    - name: slack.send
 
   mcpServers:
     - name: github
-    - name: slack
     - name: postgres-readonly
 
   memories:
     working:
-      name: research-agent-working-memory
+      name: support-triage-working
     longTerm:
-      name: company-research-memory
-    episodic:
-      name: research-agent-episodes
+      name: support-triage-long-term
 
   ragRefs:
-    - name: company-docs-rag
-    - name: market-reports-rag
-
-  planning:
-    mode: hierarchical
-    plannerRef:
-      name: default-planner
-    maxPlanDepth: 5
-    requirePlanApproval: false
-
-  execution:
-    loopRef:
-      name: react-loop
-    maxSteps: 30
-    timeout: 30m
-    retryPolicy:
-      maxRetries: 2
-      backoff: exponential
+    - name: support-docs-rag
 
   handoffs:
     allowedAgents:
-      - writer-agent
-      - data-agent
-      - reviewer-agent
-    strategy: explicit
-
-  guardrails:
-    input:
-      - name: pii-filter
-    output:
-      - name: citation-required
-      - name: no-confidential-leakage
-    tool:
-      - name: dangerous-tool-approval
+      - support-escalation
+      - billing-agent
 
   policies:
-    - name: research-agent-policy
+    - name: no-customer-data-exfiltration
+    - name: external-send-requires-approval
 
   budgets:
     tokenLimitPerRun: 200000
@@ -104,24 +67,53 @@ spec:
 
   observability:
     tracing: enabled
-    logLevel: info
+    abom: enabled
     redactSensitiveData: true
 
 status:
   phase: Ready
+  framework: openai-agents-sdk
+  modelRoute: research-default
   activeExecutions: 2
   lastRunAt: "2026-05-09T10:30:00Z"
-  currentModel: gpt-5-thinking
+  abomRef:
+    name: support-triage-abom
 ```
 
-Important distinction:
+## Identity vs. execution vs. deployment
+
+The `Agent` record is **identity and capability**. Distinct concerns live in distinct resources:
 
 ```text
-Agent = identity, capabilities, behavior, permissions
-Execution = one concrete run of that agent
-Deployment = how many instances / where / scaling / rollout
+Agent          identity, capabilities, framework adapter, policies
+Execution      one concrete run of the agent
+Deployment     how many instances run, where, with what scaling
+Conversation   the durable record of dialog state for an agent run
 ```
 
-Do **not** make `Agent` equal to “running process.”
+`Agent` is not a "running process." It is the configuration that produces processes through `Deployment` and runtime artifacts through `Execution`.
 
----
+## Discovery
+
+Joch can register agents from existing code:
+
+```bash
+joch discover --framework openai-agents-sdk --path ./services
+joch discover --framework claude-agent-sdk --path ./coding-agents
+joch discover --framework langgraph --path ./pipelines
+joch discover --framework crewai --path ./marketing
+```
+
+The output is a stub `Agent` record per discovered agent. Owners review, fill in policies, model routes, and budgets, and apply.
+
+## Status
+
+The status subresource captures live state:
+
+- `phase` — `Pending`, `Ready`, `Running`, `Failed`, `Suspended`.
+- `framework` — the resolved framework adapter, copied from spec at compile time.
+- `modelRoute` — the resolved model route used by the latest execution.
+- `activeExecutions` — current concurrent runs.
+- `abomRef` — pointer to the latest ABOM. Refreshed on every change to the agent or its dependencies.
+
+[Back to the catalog](index.md)

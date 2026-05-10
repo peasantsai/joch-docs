@@ -1,231 +1,207 @@
-# Kubernetes Specs
+# Resource Catalog
 
-Each page in this section contains one Kubernetes-style YAML resource specification extracted from the Resource Model overview.
+One page per Joch resource kind. All pages use the same Kubernetes-style envelope (`apiVersion / kind / metadata / spec / status`).
 
 <div class="grid cards" markdown>
 
--   **Agent**
+-   :material-account-cog-outline: **Agent**
 
     ---
 
-    Kubernetes YAML contract for `Agent`.
+    The framework-agnostic record of an agent: identity, model policy, tools, MCP servers, memory bindings, and policies.
 
     [Open spec](agent.md)
 
--   **Model**
+-   :material-puzzle-outline: **FrameworkAdapter**
 
     ---
 
-    Kubernetes YAML contract for `Model`.
+    Connects an agent record to the SDK that runs it (OpenAI Agents SDK, Claude Agent SDK, Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, custom).
+
+    [Open spec](framework-adapter.md)
+
+-   :material-brain: **Model**
+
+    ---
+
+    A model backend record: provider, capabilities, limits, pricing, defaults.
 
     [Open spec](model.md)
 
--   **Personality**
+-   :material-router-network-wireless: **ModelRoute**
 
     ---
 
-    Kubernetes YAML contract for `Personality`.
+    Capability-aware, cost-aware, region-aware fallback policy across providers.
 
-    [Open spec](personality.md)
+    [Open spec](model-route.md)
 
--   **Prompt**
-
-    ---
-
-    Kubernetes YAML contract for `Prompt`.
-
-    [Open spec](prompt.md)
-
--   **Skill**
+-   :material-tools: **Tool**
 
     ---
 
-    Kubernetes YAML contract for `Skill`.
-
-    [Open spec](skill.md)
-
--   **Tool**
-
-    ---
-
-    Kubernetes YAML contract for `Tool`.
+    A callable function exposed through the tool gateway, with side-effect classification and safety controls.
 
     [Open spec](tool.md)
 
--   **MCPServer**
+-   :material-server-security: **MCPServer**
 
     ---
 
-    Kubernetes YAML contract for `MCPServer`.
+    A Model Context Protocol server registered with the MCP gateway: discovery, version pinning, sandboxing, trust scoring.
 
     [Open spec](mcpserver.md)
 
--   **Memory**
+-   :material-tools: **ToolCall**
 
     ---
 
-    Kubernetes YAML contract for `Memory`.
-
-    [Open spec](memory.md)
-
--   **RAG**
-
-    ---
-
-    Kubernetes YAML contract for `RAG`.
-
-    [Open spec](rag.md)
-
--   **KnowledgeSource**
-
-    ---
-
-    Kubernetes YAML contract for `KnowledgeSource`.
-
-    [Open spec](knowledge-source.md)
-
--   **Plan**
-
-    ---
-
-    Kubernetes YAML contract for `Plan`.
-
-    [Open spec](plan.md)
-
--   **ExecutionLoop**
-
-    ---
-
-    Kubernetes YAML contract for `ExecutionLoop`.
-
-    [Open spec](execution-loop.md)
-
--   **Execution**
-
-    ---
-
-    Kubernetes YAML contract for `Execution`.
-
-    [Open spec](execution.md)
-
--   **Deployment**
-
-    ---
-
-    Kubernetes YAML contract for `Deployment`.
-
-    [Open spec](deployment.md)
-
--   **Policy**
-
-    ---
-
-    Kubernetes YAML contract for `Policy`.
-
-    [Open spec](policy.md)
-
--   **Guardrail**
-
-    ---
-
-    Kubernetes YAML contract for `Guardrail`.
-
-    [Open spec](guardrail.md)
-
--   **Trace**
-
-    ---
-
-    Kubernetes YAML contract for `Trace`.
-
-    [Open spec](trace.md)
-
--   **Artifact**
-
-    ---
-
-    Kubernetes YAML contract for `Artifact`.
-
-    [Open spec](artifact.md)
-
--   **Secret**
-
-    ---
-
-    Kubernetes YAML contract for `Secret`.
-
-    [Open spec](secret.md)
-
--   **Budget**
-
-    ---
-
-    Kubernetes YAML contract for `Budget`.
-
-    [Open spec](budget.md)
-
--   **Eval**
-
-    ---
-
-    Kubernetes YAML contract for `Eval`.
-
-    [Open spec](eval.md)
-
--   **Environment**
-
-    ---
-
-    Kubernetes YAML contract for `Environment`.
-
-    [Open spec](environment.md)
-
--   **Team / Namespace**
-
-    ---
-
-    Kubernetes YAML contract for `Team / Namespace`.
-
-    [Open spec](team-namespace.md)
-
--   **ToolCall**
-
-    ---
-
-    Kubernetes YAML contract for `ToolCall`.
+    One concrete invocation of a tool, with idempotency key, side-effect class, approval status, and result.
 
     [Open spec](toolcall.md)
 
--   **Handoff**
+-   :material-shield-key-outline: **Policy**
 
     ---
 
-    Kubernetes YAML contract for `Handoff`.
+    Portable policy-as-code for tool, model, network, data, budget, and audit rules.
 
-    [Open spec](handoff.md)
+    [Open spec](policy.md)
 
--   **Approval**
+-   :material-account-check-outline: **Approval**
 
     ---
 
-    Kubernetes YAML contract for `Approval`.
+    A human-review record for risky tool calls or release promotions.
 
     [Open spec](approval.md)
 
--   **Conversation**
+-   :material-format-list-bulleted-square: **ABOM**
 
     ---
 
-    Kubernetes YAML contract for `Conversation`.
+    Agent Bill of Materials extending OWASP AgBOM (CycloneDX, SPDX, SWID).
+
+    [Open spec](abom.md)
+
+-   :material-graph-outline: **Trace**
+
+    ---
+
+    Per-execution event log, exporting OpenTelemetry and OCSF.
+
+    [Open spec](trace.md)
+
+-   :material-cogs: **Execution**
+
+    ---
+
+    One concrete run of an agent.
+
+    [Open spec](execution.md)
+
+-   :material-message-text-outline: **Conversation**
+
+    ---
+
+    Vendor-neutral, durable record of an agent's dialog.
 
     [Open spec](conversation.md)
 
--   **StateCheckpoint**
+-   :material-content-save-check-outline: **StateCheckpoint**
 
     ---
 
-    Kubernetes YAML contract for `StateCheckpoint`.
+    Vendor-neutral mid-conversation snapshot used for provider migration.
 
     [Open spec](state-checkpoint.md)
+
+-   :material-database-outline: **Memory**
+
+    ---
+
+    Working / semantic / episodic memory bindings.
+
+    [Open spec](memory.md)
+
+-   :material-database-search-outline: **RAG**
+
+    ---
+
+    Retrieval-augmented generation indices.
+
+    [Open spec](rag.md)
+
+-   :material-book-outline: **KnowledgeSource**
+
+    ---
+
+    Pointers to corpora that feed RAG indices.
+
+    [Open spec](knowledge-source.md)
+
+-   :material-paperclip: **Artifact**
+
+    ---
+
+    Durable execution outputs.
+
+    [Open spec](artifact.md)
+
+-   :material-key-variant: **Secret**
+
+    ---
+
+    External secret references; values resolved at the gateway boundary.
+
+    [Open spec](secret.md)
+
+-   :material-cash-multiple: **Budget**
+
+    ---
+
+    Cost and usage caps enforced before model and tool calls.
+
+    [Open spec](budget.md)
+
+-   :material-clipboard-check-outline: **Eval**
+
+    ---
+
+    Scored agent evaluation with thresholds and release gates.
+
+    [Open spec](eval.md)
+
+-   :material-rocket-launch-outline: **Deployment**
+
+    ---
+
+    Where and how many instances of an agent run.
+
+    [Open spec](deployment.md)
+
+-   :material-domain: **Environment**
+
+    ---
+
+    Promotion boundary (`dev`, `staging`, `prod`) with bound policies and budgets.
+
+    [Open spec](environment.md)
+
+-   :material-account-multiple-outline: **Team / Namespace**
+
+    ---
+
+    Multi-tenant ownership boundary.
+
+    [Open spec](team-namespace.md)
+
+-   :material-arrow-decision-outline: **Handoff**
+
+    ---
+
+    Inter-agent transfer of control (A2A).
+
+    [Open spec](handoff.md)
 
 </div>

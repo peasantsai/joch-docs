@@ -1,18 +1,18 @@
 # Model
 
-Kubernetes-style YAML resource specification for Joch `Model` resources.
+A `Model` resource describes a backend capability — provider, name, capabilities, limits, pricing, defaults — not just a model identifier. Joch's model router uses `Model` records together with [`ModelRoute`](model-route.md) records to make capability-aware, cost-aware, region-aware decisions.
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## Model spec
-
-A `Model` should describe a backend capability, not just a model name.
+## Spec
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Model
 metadata:
   name: gpt-5-thinking
+  labels:
+    provider: openai
 spec:
   provider: openai
   model: gpt-5.5-thinking
@@ -69,17 +69,35 @@ status:
   latencyP95Ms: 2800
 ```
 
-Joch will need model capability matching for commands like:
+## Local models
 
-```bash
-joch run research-agent --model claude-sonnet
-joch models check --agent research-agent --target claude-sonnet
+Local models are first-class. Use `endpoint.type: local` and the appropriate provider adapter:
+
+```yaml
+spec:
+  provider: ollama
+  model: llama-3.3-70b
+  endpoint:
+    type: local
+    baseUrl: http://localhost:11434
+  auth: {}
+  capabilities:
+    text: true
+    toolCalling: true
+    structuredOutput: false
+  routing:
+    regions: [on-prem]
+    fallbackPolicy: on_error
 ```
 
-The compatibility layer should answer:
+This makes data-residency-bound deployments work without changing the agent record.
 
-```text
-Can this model run this agent with its tools, memory, planning loop, and output constraints?
-```
+## Capability matching
 
----
+`capabilities` is consumed by the [model router](../../architecture/model-router.md) and by Joch's [provider migration](../../architecture/state-portability.md) checks. A request that needs vision, structured output, or long context is matched against this vector before the call is dispatched.
+
+## Health
+
+`status.health` is updated by passive (latency, error rate) and active (synthetic probe) signals from the model router. Routes can fall forward when health drops below threshold.
+
+[Back to the catalog](index.md)

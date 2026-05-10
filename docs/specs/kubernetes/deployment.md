@@ -1,56 +1,49 @@
 # Deployment
 
-Kubernetes-style YAML resource specification for Joch `Deployment` resources.
+A `Deployment` describes where and how many instances of an agent run, with what scaling, in what environment. Joch's controller manager reconciles `Deployment` records into runtime artifacts via the active [runtime adapter](../../architecture/service-architecture.md) (local processes, Docker containers, Kubernetes Deployments / StatefulSets / Jobs).
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## Deployment spec
-
-A `Deployment` runs agents as a managed fleet.
+## Spec and status
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Deployment
 metadata:
-  name: research-agent-prod
+  name: support-triage-prod
+  namespace: support-platform
 spec:
-  agentRef:
-    name: research-agent
+  agentRef: { name: support-triage }
+  environmentRef: { name: prod }
 
   replicas: 3
-
-  strategy:
-    type: rolling
-    maxUnavailable: 1
-    maxSurge: 1
-
-  runtime:
-    type: container
-    image: ghcr.io/acme/agent-runtime:1.4.0
-
-  environmentRef:
-    name: prod-eu
-
   autoscaling:
     enabled: true
     minReplicas: 2
-    maxReplicas: 20
+    maxReplicas: 12
     metrics:
-      - type: queue_depth
-        target: 20
-      - type: latency_p95
+      - type: queueDepth
+        target: 50
+      - type: latencyP95
         targetMs: 5000
+
+  rollout:
+    strategy: rolling
+    maxSurge: 1
+    maxUnavailable: 0
+    canary:
+      enabled: false
+      percentage: 10
+      duration: 30m
+
+  runtime:
+    adapter: kubernetes
+    workerImage: ghcr.io/peasantsai/joch-worker:1.0.0
 
   scheduling:
     region: eu
     nodeSelector:
       workload: agent-runtime
-
-  rollout:
-    canary:
-      enabled: true
-      percentage: 10
-      duration: 30m
 
   healthChecks:
     readiness:
@@ -60,12 +53,30 @@ spec:
       type: heartbeat
       interval: 30s
 
+  promotion:
+    requiresEval: support-triage-quality
+    requiresApproval: release-manager
+
 status:
   phase: Available
-  readyReplicas: 3
-  currentRevision: 12
+  replicasReady: 3
+  rolloutStatus: stable
+  currentAgentVersion: 14
 ```
 
-This is the resource that makes `joch` a real fleet manager, not just a local CLI.
+## Strategy
 
----
+```text
+rolling      progressive replacement, default
+recreate     teardown then create
+canary       % traffic shift via routing
+shadow       new version receives mirrored traffic, results compared offline
+```
+
+Strategy choice depends on the runtime adapter and the agent's risk profile. Side-effecting agents typically use `rolling` with `maxUnavailable: 0`.
+
+## Promotion gates
+
+`promotion.requiresEval` and `promotion.requiresApproval` make this `Deployment` impossible to apply without the named release gates passing. This is the link between [Eval](eval.md), [Approval](approval.md), and the runtime topology.
+
+[Back to the catalog](index.md)

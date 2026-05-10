@@ -1,89 +1,125 @@
 # Tool
 
-Kubernetes-style YAML resource specification for Joch `Tool` resources.
+A `Tool` resource describes a single callable function exposed through the [tool gateway](../../architecture/tool-gateway.md). Tools may be functions in an agent's code, REST endpoints, MCP tools (registered via [`MCPServer`](mcpserver.md)), or sandboxed OS commands.
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## Tool spec
-
-Tools are callable functions. MCP tools are the obvious compatibility target: MCP tools have names and input schemas and let models interact with external systems. ([Model Context Protocol][3])
+## Spec
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Tool
 metadata:
-  name: github.create_issue
+  name: zendesk.create_ticket
+  namespace: support-platform
 spec:
-  type: mcp
-  mcpServerRef:
-    name: github
+  type: rest
 
-  description: Create a GitHub issue.
+  description: Create a Zendesk support ticket on behalf of a customer.
+
+  endpoint:
+    method: POST
+    url: https://example.zendesk.com/api/v2/tickets.json
+    auth:
+      type: bearer
+      secretRef:
+        name: zendesk-api-token
 
   inputSchema:
     type: object
-    required:
-      - repo
-      - title
-      - body
+    required: [subject, body]
     properties:
-      repo:
-        type: string
-      title:
+      subject:
         type: string
       body:
         type: string
+      priority:
+        type: string
+        enum: [low, normal, high, urgent]
 
   outputSchema:
     type: object
     properties:
-      issueUrl:
-        type: string
-      issueNumber:
-        type: integer
+      ticketUrl: { type: string }
+      ticketId:  { type: integer }
 
   sideEffects:
     level: external_write
     idempotent: false
     requiresApproval: true
+    idempotencyKeyTemplate: "zendesk-{{ args.subject | hash }}"
 
   safety:
     allowedAgents:
-      - engineering-agent
-      - triage-agent
+      - support-triage
+      - support-escalation
     deniedNamespaces:
       - sandbox
     rateLimit:
       callsPerMinute: 10
+      callsPerDay: 500
 
   observability:
     logArgs: true
     logResult: true
     redactFields:
-      - token
-      - password
+      - args.body
+      - args.customer_email
 
 status:
   phase: Ready
+  totalCalls7d: 412
+  failureRate7d: 0.014
 ```
 
-I would explicitly classify tools:
+## Tool types
 
 ```text
-read_only
-local_write
-external_write
-financial
-communication
-code_execution
-privileged
+function       a callable in user code, registered via a framework adapter
+rest           a REST endpoint with input/output schemas
+mcp            a tool exposed by an MCPServer (registered with the MCP gateway)
+os             a sandboxed command executed by Joch (e.g., file or shell ops)
 ```
 
-This matters for governance and approvals.
+For `type: mcp`, set `mcpServerRef` instead of `endpoint`:
 
----
+```yaml
+spec:
+  type: mcp
+  mcpServerRef:
+    name: github
+  description: Create a GitHub issue.
+  inputSchema: {...}
+```
 
-[1]: https://modelcontextprotocol.io/specification/2025-11-25?utm_source=chatgpt.com "Specification"
-[2]: https://openai.github.io/openai-agents-python/tracing/?utm_source=chatgpt.com "Tracing - OpenAI Agents SDK"
-[3]: https://modelcontextprotocol.io/specification/2025-11-25/server/tools?utm_source=chatgpt.com "Tools"
-[4]: https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropics-model-context-protocol-has-critical-security-flaw-exposed?utm_source=chatgpt.com "Anthropic's Model Context Protocol includes a critical remote code execution vulnerability - newly discovered exploit puts 200,000 AI servers at risk"
+## Side-effect class
+
+`sideEffects.level` drives default behavior:
+
+```text
+read_only           reads external state; no writes; no costs
+local_write         writes to local agent-owned state (working memory, sandbox file)
+external_write      writes to external systems (issue trackers, ticketing, Slack)
+financial           moves money or commits to charges
+communication       sends messages to humans (email, SMS, Slack DM)
+code_execution      executes code (sandboxed REPL, browser automation)
+privileged          touches sensitive infrastructure (cluster admin, DB DDL)
+```
+
+Each level has default approval policies and audit defaults. Operators override per record.
+
+## Idempotency
+
+`sideEffects.idempotencyKeyTemplate` lets Joch derive a stable key from arguments. The tool gateway deduplicates calls with the same key within a configurable window, and prevents duplicate side effects across [provider migrations](../../architecture/state-portability.md).
+
+## Safety
+
+```text
+allowedAgents       only listed agents may call the tool
+deniedNamespaces    no agent in these namespaces may call the tool
+rateLimit           hard caps per minute / day, enforced at the gateway
+```
+
+Tool safety is composable with [`Policy`](policy.md). Tool-level rules are minimum guarantees; policies layer additional rules on top.
+
+[Back to the catalog](index.md)

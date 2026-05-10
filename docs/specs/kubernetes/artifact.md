@@ -1,43 +1,72 @@
 # Artifact
 
-Kubernetes-style YAML resource specification for Joch `Artifact` resources.
+An `Artifact` is a durable output of an [`Execution`](execution.md): a generated report, dataset, file, image, transcript, or any payload that should be retained beyond the run. Artifacts are referenced by other resources (`ToolCall.output`, `Conversation` content blocks, `Trace` events) instead of being inlined.
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## Artifact spec
-
-Agents produce durable things.
+## Spec and status
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Artifact
 metadata:
-  name: market-analysis-report
+  name: support-77123-draft-reply
+  namespace: support-platform
 spec:
   type: document
+
   producedBy:
-    executionRef:
-      name: exec-20260509-001
+    executionRef: { name: exec-20260510-001 }
+  agentRef: { name: support-triage }
 
   storage:
-    type: s3
-    uri: s3://agent-artifacts/reports/market-analysis.md
+    backend: s3
+    bucket: joch-artifacts-prod
+    keyTemplate: "{{ namespace }}/{{ agent }}/{{ execution }}/{{ name }}.md"
+    encryption:
+      type: kms
+      keyRef:
+        name: artifact-kms-key
 
   content:
     mimeType: text/markdown
-    checksum: sha256:abc123
+    classification: customer-tier
+    sizeBytes: 2148
+    sha256: "f3c1..."
 
   provenance:
     sources:
-      - https://example.com/source-1
+      - artifact://kb/support-docs-public/refund-policy.md
     toolCalls:
-      - call_123
-      - call_456
+      - call-abc123
+
+  retention:
+    days: 90
 
 status:
   phase: Ready
+  uri: artifact://support-platform/support-triage/exec-20260510-001/support-77123-draft-reply.md
+  storedAt: "2026-05-10T10:35:13Z"
 ```
 
-Artifacts give Joch reproducibility and auditability.
+## Backends
 
----
+```text
+local          local filesystem (developer mode)
+s3             S3-compatible object store
+gcs            Google Cloud Storage
+minio          MinIO (S3-compatible)
+azure-blob     Azure Blob Storage
+```
+
+The `Artifact` resource is the same shape across backends.
+
+## Why separate from Trace
+
+Trace events are dense and high-cardinality; artifacts are large and low-cardinality. Keeping them in different stores keeps trace queries fast and artifact retention cost-effective.
+
+## Provenance
+
+`provenance` makes artifacts auditable: which sources informed them, which tool calls produced them. This feeds compliance and reproducibility for downstream consumers.
+
+[Back to the catalog](index.md)

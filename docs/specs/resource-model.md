@@ -1,53 +1,70 @@
 # Resource Model
 
-## Control-Plane Premise
+Joch's resource model is a Kubernetes-style API surface for **operating** AI agent fleets. It deliberately stops short of authoring agents — that work belongs in the SDK each agent was built with. The kinds in the catalog represent the records, decisions, runtime artifacts, and operational rules that a control plane needs.
 
-I would solve OpenAI-to-Claude mid-conversation switching with:
+## Premise
+
+> Joch owns agent identity, governance, runtime state, and audit.
+> Vendor SDKs own the agent loop, prompts, and tool implementation.
+> Vendor providers own model inference.
+
+This is the difference between a real fleet manager and a thin wrapper around SDKs.
+
+## Top-level kinds
 
 ```text
-Canonical state store
-+ event-sourced conversation log
-+ normalized tool-call records
-+ externalized memory/artifacts
-+ migration checkpoints
-+ provider adapters
-+ capability validation
+Identity / desired state                 Runtime                Operations
+─────────────────────────────────        ────────────           ─────────────
+Agent                                    Execution              Deployment
+FrameworkAdapter                         Conversation           Environment
+Model                                    StateCheckpoint        Team / Namespace
+ModelRoute                               ToolCall               Budget
+Tool                                     Approval               Eval
+MCPServer                                Handoff                Secret
+Memory                                   Trace                  ABOM
+RAG                                      Artifact
+KnowledgeSource
+Policy
 ```
 
-The most important architectural decision is this:
+The minimum useful v1 set:
 
-> `joch` should own agent identity, memory, and lifecycle.
-> Vendors should only provide inference backends.
+```text
+Agent, FrameworkAdapter, Model, ModelRoute, Tool, MCPServer,
+Policy, Approval, ToolCall, Trace, Conversation, StateCheckpoint,
+Memory, RAG, ABOM, Execution, Deployment, Eval, Environment, Team / Namespace
+```
 
-That is the difference between a real fleet manager and a thin wrapper around SDKs.
+The rest can land later without breaking schemas.
 
-I would make `joch` specs feel like **Kubernetes CRDs for agent systems**.
+## What is *not* a resource kind
 
-The core idea:
+Joch deliberately excludes kinds that belong inside the SDK:
+
+```text
+Personality                in the SDK / agent code
+Skill                      in the SDK / agent code (composes tools, prompts, planners)
+Prompt                     in the SDK / agent code
+Plan                       in the SDK at runtime, summarized into a Trace event
+ExecutionLoop              in the SDK
+Guardrail                  replaced by Joch Policy + AOS hooks at gateway boundaries
+```
+
+Trying to model these as control-plane resources would force every SDK into a single shape and pull Joch into the SDK competition. Joch governs the **boundary** SDKs cross instead.
+
+## Common envelope
+
+Every resource shares a Kubernetes-style envelope:
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
-kind: <ResourceKind>
-metadata:
-  name: example-resource
-  labels:
-    team: string
-    env: string
-spec:
-  ...
-status:
-  ...
-```
-
-Every resource should have:
-
-```yaml
-apiVersion: joch.dev/v1alpha1
-kind: <ResourceKind>
+kind: <Kind>
 metadata:
   name: string
   namespace: string
-  labels: {}
+  labels:
+    team: string
+    env: dev | staging | prod
   annotations: {}
 spec: {}
 status:
@@ -56,126 +73,18 @@ status:
   observedGeneration: number
 ```
 
-This gives Joch a common control-plane model for agents, models, memories, tools, deployments, and runtime state.
+The shared envelope makes the API discoverable, cacheable, and CLI-friendly across the catalog.
 
-MCP should strongly influence the design: its official primitives include **tools**, **resources**, and **prompts**, with tools exposing callable functions and resources exposing context/data by URI. ([Model Context Protocol][1]) OpenAI’s Agents SDK also treats tools, handoffs, guardrails, tracing, and sessions as first-class orchestration concepts, which map well into `joch` resources. ([OpenAI GitHub][2])
-
----
-
-## Top-Level Resource Kinds
-
-I would start with these:
-
-```text
-Agent
-Model
-Skill
-Tool
-MCPServer
-Personality
-Memory
-RAG
-KnowledgeSource
-Prompt
-Plan
-Execution
-Deployment
-Policy
-Guardrail
-Secret
-Budget
-Eval
-Trace
-Artifact
-Environment
-Team
-```
-
-The minimum useful v1 should include:
-
-```text
-Agent
-Model
-Skill
-MCPServer
-Personality
-Memory
-RAG
-Plan
-Execution
-Deployment
-Policy
-Trace
-```
-
-The rest can come later.
-
-## Kubernetes Specs
-
-Concrete Kubernetes-style YAML contracts now live in the dedicated [Kubernetes Specs](kubernetes/index.md) section. Each resource kind has its own page under `docs/specs/kubernetes/`, keeping this overview focused on the shared model, relationships, API grouping, and design philosophy.
-
----
-
-## Resource relationships
-
-The graph should look like this:
-
-```text
-Deployment
-  └── Agent
-        ├── Model
-        ├── Personality
-        ├── Prompt
-        ├── Skills
-        │     └── Tools
-        │           └── MCPServer
-        ├── Memories
-        ├── RAG
-        │     └── KnowledgeSources
-        ├── ExecutionLoop
-        ├── Policies
-        ├── Guardrails
-        └── Budgets
-
-Execution
-  ├── Agent
-  ├── Plan
-  ├── Trace
-  ├── ToolCalls
-  ├── MemoryWrites
-  └── Artifacts
-```
-
-This separation is important because different resources change at different speeds:
-
-```text
-Model: changes often
-Personality: changes carefully
-Policy: changes through governance
-Memory: changes continuously
-Execution: created per run
-Deployment: changes through rollout
-```
-
----
-
----
-
-## Suggested v1alpha1 API groups
-
-I would organize the API into groups:
+## API groups
 
 ```text
 joch.dev/v1alpha1
   Agent
-  Personality
-  Prompt
-  Skill
+  FrameworkAdapter
+  Policy
 
 runtime.joch.dev/v1alpha1
   Execution
-  Plan
-  ExecutionLoop
   ToolCall
   Handoff
   Approval
@@ -185,12 +94,10 @@ runtime.joch.dev/v1alpha1
 model.joch.dev/v1alpha1
   Model
   ModelRoute
-  ModelPolicy
 
 tools.joch.dev/v1alpha1
   Tool
   MCPServer
-  ToolRegistry
 
 memory.joch.dev/v1alpha1
   Memory
@@ -200,161 +107,105 @@ memory.joch.dev/v1alpha1
 ops.joch.dev/v1alpha1
   Deployment
   Environment
+  Team
   Budget
   Trace
   Eval
   Artifact
-  Policy
-  Guardrail
+  ABOM
+  Secret
 ```
 
-For a CLI, the user would still see simple commands:
+Operators rarely need to think about API groups; the CLI is `joch get <kind>` and the kind is unambiguous.
 
-```bash
-joch get agents
-joch get models
-joch get skills
-joch get memories
-joch get rags
-joch get executions
-joch get deployments
-```
-
----
-
----
-
-## Additional resources
-
-The obvious resources are already listed. I would add these:
+## Relationships
 
 ```text
-Prompt
-Conversation
-StateCheckpoint
-Policy
-Guardrail
-Budget
-Trace
-Artifact
-Approval
-Handoff
-KnowledgeSource
-Eval
-Environment
-SecretRef
-ModelRoute
-ToolCall
+Deployment
+  └── Agent
+        ├── FrameworkAdapter
+        ├── ModelRoute ──┐
+        ├── Tools ───────┼── ToolCall (runtime)
+        ├── MCPServers ──┘
+        ├── Memories
+        ├── RAG
+        │     └── KnowledgeSources
+        ├── Policies
+        ├── Budgets
+        └── ABOM (derived)
+
+Execution
+  ├── Agent
+  ├── Conversation
+  │     └── StateCheckpoint
+  ├── Trace
+  ├── ToolCalls
+  ├── Approvals
+  ├── Handoffs
+  └── Artifacts
 ```
 
-The most important missed ones are:
+Resources move at different speeds. `Model` and `ModelRoute` change often. `Personality` (in the SDK) and `Policy` change carefully. `Memory` changes continuously. `Execution` is created per run. `Deployment` changes through controlled rollouts.
 
-```text
-Conversation
-StateCheckpoint
-Policy
-Guardrail
-Trace
-Approval
-ToolCall
-Artifact
-```
+## Project layout convention
 
-Without those, we cannot get serious enterprise governance, reproducibility, or vendor migration.
-
----
-
----
-
-## Example complete app bundle
-
-A real project might look like:
+A real project ships its records as a directory:
 
 ```text
 joch.yaml
 agents/
-  research-agent.yaml
-  writer-agent.yaml
+  support-triage.yaml
+framework-adapters/
+  openai-agents-sdk.yaml
+  claude-agent-sdk.yaml
 models/
-  openai-gpt.yaml
-  anthropic-claude.yaml
-personalities/
-  pragmatic-researcher.yaml
-  technical-writer.yaml
-prompts/
-  research-system.yaml
-skills/
-  web-research.yaml
-  report-writing.yaml
+  gpt-5-thinking.yaml
+  claude-sonnet.yaml
+model-routes/
+  research-default.yaml
 tools/
-  web-search.yaml
-  github-tools.yaml
-mcp/
+  zendesk-search.yaml
+  slack-send.yaml
+mcp-servers/
   github.yaml
-  slack.yaml
 memory/
-  research-memory.yaml
+  support-working-memory.yaml
 rag/
-  company-docs-rag.yaml
+  support-docs-rag.yaml
 policies/
-  default-policy.yaml
-  pii-policy.yaml
-guardrails/
-  citation-required.yaml
+  no-external-send-without-approval.yaml
 deployments/
-  research-agent-prod.yaml
+  support-triage-prod.yaml
+environments/
+  prod.yaml
 evals/
-  research-agent-eval.yaml
+  support-triage-quality.yaml
+budgets/
+  support-platform-monthly.yaml
 ```
-
-Then:
 
 ```bash
 joch apply -f .
 joch get agents
-joch run research-agent -f tasks/market-research.yaml
-joch logs execution/exec-123
-joch trace execution/exec-123
+joch run support-triage -f cases/triage.yaml
+joch trace last
 joch approvals ls
 ```
 
----
-
----
-
-## The north-star spec model
-
-The cleanest mental model is:
+## North-star summary
 
 ```text
-Desired state:
-  Agent, Model, Skill, Personality, Memory, RAG, Policy, Deployment
+Desired state    Agent, FrameworkAdapter, Model, ModelRoute, Tool, MCPServer,
+                 Memory, RAG, KnowledgeSource, Policy, Deployment, Environment
 
-Runtime state:
-  Execution, Plan, ToolCall, Handoff, Approval, Trace, Artifact
+Runtime state    Execution, Conversation, StateCheckpoint, ToolCall, Handoff,
+                 Approval, Trace, Artifact
 
-Portable state:
-  Conversation, StateCheckpoint, Memory, Artifact
-
-Integration state:
-  Tool, MCPServer, KnowledgeSource, SecretRef
+Operations       Budget, Eval, ABOM, Team, Secret
 ```
 
-That gives `joch` a real control-plane architecture.
+The design philosophy:
 
-The core design philosophy should be:
+> Agents are not prompts. Agents are deployable, observable, governed, stateful records with vendored implementations.
 
-> Agents are not prompts.
-> Agents are deployable, observable, governed, stateful resources.
-
-That is the difference between a CLI wrapper and a true agent fleet manager.
-
-[1]: https://modelcontextprotocol.io/specification/2025-11-25?utm_source=chatgpt.com "Specification"
-[2]: https://openai.github.io/openai-agents-python/tracing/?utm_source=chatgpt.com "Tracing - OpenAI Agents SDK"
-[3]: https://modelcontextprotocol.io/specification/2025-11-25/server/tools?utm_source=chatgpt.com "Tools"
-[4]: https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropics-model-context-protocol-has-critical-security-flaw-exposed?utm_source=chatgpt.com "Anthropic's Model Context Protocol includes a critical remote code execution vulnerability - newly discovered exploit puts 200,000 AI servers at risk"
-
-[1]: https://modelcontextprotocol.io/specification/2025-11-25?utm_source=chatgpt.com "Specification"
-[2]: https://openai.github.io/openai-agents-python/tracing/?utm_source=chatgpt.com "Tracing - OpenAI Agents SDK"
-[3]: https://modelcontextprotocol.io/specification/2025-11-25/server/tools?utm_source=chatgpt.com "Tools"
-[4]: https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropics-model-context-protocol-has-critical-security-flaw-exposed?utm_source=chatgpt.com "Anthropic's Model Context Protocol includes a critical remote code execution vulnerability - newly discovered exploit puts 200,000 AI servers at risk"
+That sentence is what separates a control plane from a CLI wrapper.

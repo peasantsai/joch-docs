@@ -1,68 +1,84 @@
 # Execution
 
-Kubernetes-style YAML resource specification for Joch `Execution` resources.
+An `Execution` is one concrete run of an [`Agent`](agent.md). It owns model calls, tool calls, memory operations, RAG retrievals, traces, costs, and artifacts produced during the run.
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## Execution spec
-
-An `Execution` is one run.
+## Spec and status
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Execution
 metadata:
-  name: exec-20260509-001
+  name: exec-20260510-001
+  namespace: support-platform
 spec:
-  agentRef:
-    name: research-agent
+  agentRef: { name: support-triage }
+
+  trigger:
+    type: webhook
+    sourceRef:
+      name: zendesk-ticket-created
 
   input:
-    type: text
-    content: >
-      Research the market for agent fleet management.
+    content:
+      - kind: data
+        data:
+          ticketId: "T-77123"
+          subject: "Refund request for order 12345"
 
-  planRef:
-    name: market-analysis-plan-001
+  conversationRef: { name: conv-77123 }
 
-  modelOverrideRef:
-    name: gpt-5-thinking
+  modelRouteOverride:
+    routeRef: { name: research-default }
 
-  context:
-    conversationId: conv_123
-    memoryRefs:
-      - research-agent-working-memory
-    ragRefs:
-      - company-docs-rag
+  budgets:
+    inheritFromAgent: true
 
-  mode: async
-
-  approvals:
-    onToolSideEffect: pause
-    onBudgetExceeded: pause
-
-  output:
-    format: markdown
-    artifactName: market-analysis-report
+  observability:
+    sampling: full
 
 status:
-  phase: Running
-  currentStep: step-2
-  startedAt: "2026-05-09T10:30:00Z"
-  tokenUsage:
-    input: 12000
-    output: 4000
-  costUsd: 1.34
-  toolCalls: 18
-  traceRef:
-    name: trace-exec-20260509-001
+  phase: Succeeded
+  startedAt:   "2026-05-10T10:34:50Z"
+  completedAt: "2026-05-10T10:35:14Z"
+  costUsd: 0.62
+  durationMs: 24000
+  modelCalls: 9
+  toolCalls: 4
+  approvals: 1
+  hookDecisions: 24
+  artifactRefs:
+    - artifact://exec/exec-20260510-001/draft-reply.md
+  traceRef: { name: trace-exec-20260510-001 }
+  abomSnapshotRef: { name: support-triage-abom, generation: 17 }
 ```
 
-This maps well to OpenAI Agents SDK concepts like runs, tool calls, handoffs, guardrails, sessions, and tracing. ([OpenAI GitHub][2])
+## Trigger types
 
----
+```text
+manual          operator command (joch run, web console)
+webhook         external system event (Zendesk, GitHub, Slack)
+schedule        cron-style recurrence
+upstream        triggered by another agent's Handoff
+```
 
-[1]: https://modelcontextprotocol.io/specification/2025-11-25?utm_source=chatgpt.com "Specification"
-[2]: https://openai.github.io/openai-agents-python/tracing/?utm_source=chatgpt.com "Tracing - OpenAI Agents SDK"
-[3]: https://modelcontextprotocol.io/specification/2025-11-25/server/tools?utm_source=chatgpt.com "Tools"
-[4]: https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropics-model-context-protocol-has-critical-security-flaw-exposed?utm_source=chatgpt.com "Anthropic's Model Context Protocol includes a critical remote code execution vulnerability - newly discovered exploit puts 200,000 AI servers at risk"
+The trigger maps to an [AOS `agentTrigger` hook](../../aos/hooks.md), so the policy engine can `allow`, `deny`, or `modify` the triggering payload before the execution starts.
+
+## ABOM snapshot
+
+`status.abomSnapshotRef` pins the ABOM generation that was active when the execution started. This makes the execution reproducible: the exact set of tools, MCP servers, models, and policies in effect is recoverable years later.
+
+## Cost and budget
+
+`status.costUsd` is computed from model and tool call costs and reconciled with the [`Budget`](budget.md) controller after completion. A run that exceeds budget is flagged and may be terminated mid-flight if policy permits.
+
+## Replay
+
+Executions are replayable from the trace plus the ABOM snapshot. Replay is gated by policy because it may produce duplicate side effects.
+
+```bash
+joch executions replay exec-20260510-001 --policy strict
+```
+
+[Back to the catalog](index.md)

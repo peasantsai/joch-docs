@@ -1,12 +1,10 @@
 # MCPServer
 
-Kubernetes-style YAML resource specification for Joch `MCPServer` resources.
+An `MCPServer` registers a Model Context Protocol server with the [MCP gateway](../../architecture/mcp-gateway.md). The MCP gateway proxies, pins, scans, and audits every interaction with the server. Agents never reach an unregistered MCP server.
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## MCPServer spec
-
-MCP servers expose tools, resources, and prompts to clients. Official MCP docs describe servers as offering features like resources, prompts, and tools. ([Model Context Protocol][1])
+## Spec
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
@@ -21,8 +19,7 @@ spec:
 
   auth:
     type: oauth2
-    secretRef:
-      name: github-mcp-oauth
+    secretRef: { name: github-mcp-oauth }
 
   exposes:
     tools: true
@@ -32,16 +29,24 @@ spec:
   discovery:
     enabled: true
     refreshInterval: 10m
+    onSchemaDrift: quarantine
 
   security:
     sandbox: true
     allowStdio: false
-    commandWhitelist: []
     pinServerVersion: true
+    pinnedVersion: 1.2.0
     trustedPublisher: github
+    minTrustScore: 0.75
 
   policies:
     - name: mcp-tool-safety-policy
+
+  scanning:
+    promptInjectionScan: true
+    redactFieldsInResults:
+      - sshKeys
+      - apiTokens
 
 status:
   phase: Ready
@@ -50,14 +55,43 @@ status:
     - github.create_issue
   discoveredResources:
     - github://repos
-  lastDiscoveryAt: "2026-05-09T10:00:00Z"
+  lastDiscoveryAt: "2026-05-10T10:00:00Z"
+  trustScore: 0.92
+  schemaDrift: false
+  callCount7d: 1822
+  denyCount7d: 4
 ```
 
-I would be strict with MCP security. Recent reporting has highlighted MCP risks around local process execution, prompt injection, supply-chain poisoning, and unsafe STDIO handling, so the spec should make transport, trust, sandboxing, and command restrictions explicit. ([Tom's Hardware][4])
+## Why MCP needs a gateway
 
----
+Recent reports have highlighted MCP risks: local-process execution, prompt-injection in tool results, supply-chain poisoning, and unsafe stdio. Joch's gateway addresses each:
 
-[1]: https://modelcontextprotocol.io/specification/2025-11-25?utm_source=chatgpt.com "Specification"
-[2]: https://openai.github.io/openai-agents-python/tracing/?utm_source=chatgpt.com "Tracing - OpenAI Agents SDK"
-[3]: https://modelcontextprotocol.io/specification/2025-11-25/server/tools?utm_source=chatgpt.com "Tools"
-[4]: https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropics-model-context-protocol-has-critical-security-flaw-exposed?utm_source=chatgpt.com "Anthropic's Model Context Protocol includes a critical remote code execution vulnerability - newly discovered exploit puts 200,000 AI servers at risk"
+- `pinServerVersion` defends against silent version drift.
+- `sandbox: true` constrains local-process MCP servers via cgroups / seccomp.
+- `allowStdio: false` denies unsafe stdio transports unless explicitly enabled.
+- `scanning.promptInjectionScan` inspects inbound results before forwarding to the agent.
+- `policies` is the same portable [`Policy`](policy.md) surface used elsewhere — uniform across SDKs.
+
+## Discovery
+
+`discovery.refreshInterval` controls how often the gateway re-fetches the server's capabilities. A change in the discovered tool list (or in tool schemas) is **schema drift**; the policy in `discovery.onSchemaDrift` decides whether to alert, deny, or auto-quarantine.
+
+## Trust score
+
+`trustScore` is composed from publisher allow-listing, signed manifests, schema stability, denial / error history, and any third-party allow-list. Policies can require a minimum trust score.
+
+## ABOM contribution
+
+Every `MCPServer` contributes to the per-agent [`ABOM`](abom.md). The ABOM lists each server, its pinned version, its discovered capabilities, its publisher, and its trust score at the time of generation.
+
+## Operator commands
+
+```bash
+joch mcp ls
+joch describe mcpserver github
+joch mcp upgrade github --to 1.3.0 --review
+joch mcp pin github --to 1.2.0
+joch mcp quarantine suspicious-server --reason "schema drift"
+```
+
+[Back to the catalog](index.md)

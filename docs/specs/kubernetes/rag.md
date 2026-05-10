@@ -1,33 +1,34 @@
 # RAG
 
-Kubernetes-style YAML resource specification for Joch `RAG` resources.
+A `RAG` resource describes a retrieval index used by an agent. It composes one or more [`KnowledgeSource`](knowledge-source.md) resources and routes retrievals through the [RAG data-plane service](../../architecture/data-plane.md), which exposes the AOS [`knowledgeRetrieval` hook](../../aos/hooks.md).
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## RAG spec
-
-`RAG` should define retrieval behavior, not just vector storage.
+## Spec and status
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: RAG
 metadata:
-  name: company-docs-rag
+  name: support-docs-rag
+  namespace: support-platform
 spec:
+  description: RAG index over public support docs and internal runbooks.
+
   sources:
-    - name: engineering-docs
+    - name: support-docs-public
       kind: KnowledgeSource
-    - name: product-docs
+    - name: support-runbooks-internal
       kind: KnowledgeSource
 
   embeddingModelRef:
-    name: text-embedding-large
+    name: text-embedding-3-large
 
   vectorStore:
     type: pgvector
     connectionSecretRef:
-      name: rag-postgres
-    collection: company_docs
+      name: support-pgvector
+    collection: support_docs
 
   chunking:
     strategy: semantic
@@ -35,13 +36,13 @@ spec:
     overlapTokens: 120
 
   retrieval:
-    topK: 12
-    minScore: 0.72
+    topK: 5
+    minScore: 0.45
     hybridSearch: true
     reranker:
       enabled: true
       modelRef:
-        name: reranker-v1
+        name: rerank-3
 
   citations:
     required: true
@@ -56,17 +57,40 @@ spec:
     inheritFromSource: true
     enforceAtQueryTime: true
 
+  policies:
+    - name: customer-tier-scoping
+
+  observability:
+    logRetrievals: true
+
 status:
   phase: Ready
-  documentsIndexed: 18342
-  lastIndexedAt: "2026-05-09T09:45:00Z"
+  documentsIndexed: 12483
+  chunkCount: 86120
+  lastIndexedAt: "2026-05-09T22:00:00Z"
+  retrievalCount7d: 4128
+  citationRate7d: 0.91
 ```
 
-Separate `RAG` from `Memory`:
+## RAG vs. Memory
 
 ```text
-Memory = agent/user/team state
-RAG = retrieval over external knowledge corpora
+Memory        agent / user / team state owned by Joch
+RAG           retrieval over external knowledge corpora
 ```
 
----
+Keep them separate so retention, indexing, and access controls do not collide.
+
+## Hooks
+
+`knowledgeRetrieval` is called after the RAG service returns results and before the agent attaches them to the model context. A Guardian Agent can:
+
+- `deny` retrievals that contain customer-tier data the agent is not entitled to see,
+- `modify` results to scope by tenant or user,
+- annotate results with provenance metadata so the trace surfaces citations.
+
+## Quality observability
+
+`status.citationRate7d` and per-execution citation tracking feed the quality metrics in the [Observability pillar](../../pillars/observability.md). Drops in citation rate are an early signal of regression after deployments.
+
+[Back to the catalog](index.md)

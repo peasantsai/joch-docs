@@ -1,17 +1,19 @@
 # Environment
 
-Kubernetes-style YAML resource specification for Joch `Environment` resources.
+An `Environment` is a promotion boundary — typically `dev`, `staging`, or `prod` — with bound policies, budgets, defaults, and runtime configuration. Environments make `joch promote` predictable and auditable.
 
-[Back to Kubernetes specs](index.md)
+[Back to the catalog](index.md)
 
-## Environment spec
+## Spec and status
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Environment
 metadata:
-  name: prod-eu
+  name: prod
 spec:
+  description: Production environment for the support platform.
+
   region: eu-central
 
   runtime:
@@ -19,8 +21,8 @@ spec:
     cluster: prod-agent-cluster
 
   defaults:
-    modelRef:
-      name: gpt-5-thinking
+    modelRouteRef:
+      name: research-default
     traceRetentionDays: 30
     logLevel: info
 
@@ -28,12 +30,30 @@ spec:
     dataResidency: EU
     piiMode: redact
     auditRequired: true
+
+  policies:
+    - name: external-send-requires-approval
+    - name: no-customer-data-exfiltration
+
+  budgetRefs:
+    - name: support-platform-monthly
+
+status:
+  phase: Ready
 ```
 
-This enables commands like:
+## Why a separate kind
+
+Without `Environment`, every agent and deployment would have to repeat the same defaults, policies, and budgets. With `Environment`, those settings are declared once and applied to every record promoted into the environment.
+
+## Promotion
 
 ```bash
-joch deploy research-agent --env prod-eu
+joch promote agent/support-triage --from staging --to prod
+joch promote deployment/support-triage-prod --from staging --to prod
+joch promote policy/external-send-requires-approval --from staging --to prod
 ```
 
----
+A failed eval or missing approval blocks the promotion with a clear diagnostic.
+
+[Back to the catalog](index.md)
