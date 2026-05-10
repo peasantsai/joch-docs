@@ -1,100 +1,71 @@
 # Install
 
-Joch supports four install paths. Pick the one that matches where you want to run agents — same `joch apply -f .` works against all four.
+The MVP supports three deployment modes: local, Docker Compose, and Kubernetes.
 
-## Local (developer mode)
+## Local
 
-Single process, SQLite store, local files, no Kubernetes.
+Local mode is for development and first-day evaluation.
 
 ```bash
-brew install joch                       # macOS / Homebrew
-# or
-curl -sSL https://joch.dev/install.sh | bash
+joch init
+joch up
+joch get agents
 ```
 
-Start the local control plane and apply a sample agent:
+Local mode uses:
 
-```bash
-joch up
-joch apply -f https://raw.githubusercontent.com/peasantsai/joch-examples/main/quickstart/support-triage.yaml
-joch run support-triage "Triage incoming queue"
+```text
+SQLite
+local process gateway
+local file storage
 ```
 
 ## Docker Compose
 
-For team dev environments, CI smoke tests, and small self-hosted deployments.
+Compose mode is the default team trial.
 
 ```bash
-joch init docker-compose
-docker compose up -d
-joch context use docker
-joch apply -f .
+docker compose up
 ```
 
-Stack: `joch-server`, `joch-worker`, `joch-gateway`, `joch-router`, `joch-memory`, `joch-trace`, Postgres (with pgvector), Redis (event bus), MinIO (artifacts), OpenTelemetry collector.
+Compose mode uses:
+
+```text
+Postgres
+Joch Server
+Joch Gateway
+Joch Worker
+optional Redis for queueing
+```
 
 ## Kubernetes
 
-For production. Native CRDs, Helm chart, controllers, NetworkPolicies, ServiceMonitor, autoscaling.
+Kubernetes is the target production deployment.
 
 ```bash
-helm repo add joch https://charts.joch.dev
-helm install joch joch/joch -n joch-system --create-namespace
-joch context use kubernetes
-joch apply -f .
+helm install joch peasantsai/joch
 ```
 
-## Joch Cloud (managed control plane)
+Kubernetes installs:
 
-Hosted multi-tenant SaaS plus customer-runtime tunnel. Free Starter tier, paid Team / Enterprise tiers.
-
-```bash
-joch cloud login
-joch runtime install kubernetes --name prod-eu
-joch apply -f . --context cloud
+```text
+Joch Server
+Joch Gateway
+Joch Worker
+Postgres or external database configuration
+ServiceAccounts
+NetworkPolicies
+Helm values
+optional CRDs in later phases
 ```
 
-See [Revenue Models](../business/revenue-models.md) for tier details.
-
-## Verify the install
+## Verify
 
 ```bash
+joch version
 joch doctor
+joch get agents
+joch get mcpservers
 ```
 
-The doctor checks:
-
-- API server reachable,
-- model credentials configured,
-- registered MCP servers reachable and healthy,
-- worker registered and ready,
-- trace endpoint reachable,
-- AgBOM service ready.
-
-## Configure model providers
-
-Joch resolves provider credentials at the gateway boundary. Set one of:
-
-```bash
-# OpenAI
-export OPENAI_API_KEY=sk-...
-
-# Anthropic
-export ANTHROPIC_API_KEY=sk-ant-...
-
-# Google
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json
-export GOOGLE_CLOUD_PROJECT=...
-
-# Microsoft Foundry
-az login
-export AZURE_FOUNDRY_PROJECT_ENDPOINT=https://...
-```
-
-Or apply [`Secret`](../specs/kubernetes/secret.md) records pointing at Vault, Kubernetes secrets, or AWS / GCP / Azure secret managers. Joch never stores secret values.
-
-## Next
-
-- [Build your first agent](first-agent.md)
-- [Govern an MCP server](governing-mcp.md)
-- [Onboard from a vendor SDK](migration-from-vendor-sdk.md)
+`joch doctor` should verify API reachability, datastore health, worker status, and gateway readiness.

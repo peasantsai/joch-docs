@@ -1,34 +1,53 @@
 ---
-title: Joch — the vendor-neutral control plane for AI agent fleets
+title: Joch AI - harness autonomous agents into accountable workforces
 ---
 
-# Joch
+# Joch AI
 
-> **Joch is the portable control plane for AI agent fleets.**
-> It manages the inventory, governance, portability, observability, and release lifecycle of agents built with **any** SDK — OpenAI Agents SDK, Claude Agent SDK, Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, or your own Python and TypeScript code.
+> **Harness autonomous agents into accountable workforces.**
 
-Joch is **not** another agent SDK, framework, or runtime. The vendor SDKs already cover code-first agents, planning, tool use, collaboration, state, guardrails, and human review. Joch sits **above** those SDKs and answers a different question: *how do you operate, secure, and evolve a fleet of agents across vendors and frameworks?*
+Joch AI is the open control plane for discovering, governing, securing, and auditing AI agents across frameworks, model providers, tools, and runtimes.
 
-## What Joch is for
+The MVP is intentionally narrow:
 
-Joch answers operational questions that vendor SDKs leave to the operator:
+> **Secure MCP and tool governance, cross-framework agent inventory, and auditability.**
+
+Joch AI is not another agent framework. Agent SDKs already provide authoring, orchestration, memory, tool calling, tracing, and deployment surfaces. Joch AI is the layer around those systems: the system of record, policy enforcement point, approval workflow, and audit log for agent action.
+
+## Why Joch AI exists
+
+Production agents are leaving demos and entering operational systems. They call tools, read data, write to SaaS products, run MCP servers, spend money, and change state. Most organizations do not have one place to answer:
 
 ```text
-What agents exist across my company, and who owns them?
-What models, tools, MCP servers, and memory does each agent depend on?
-What did each agent do yesterday, and what did it cost?
-Which agents are using Claude, OpenAI, Gemini, or local models?
-Can I move an agent from OpenAI to Claude — and what would break?
-Can I block all agents from calling email.send without human approval?
-Can I deploy the same agent locally, in Docker, and in Kubernetes?
-Can I compare two agent versions before promoting to production?
-Can I audit every tool call, memory write, and policy denial?
-Which MCP servers are pinned, and which were quarantined this week?
+What agents exist?
+Who owns them?
+Which tools can they call?
+Which MCP servers are running?
+Which actions require approval?
+What did each agent do?
+What did each action cost?
+Can we prove what happened later?
 ```
 
-If you are writing an agent today, you do not need Joch. If you are operating ten, a hundred, or a thousand of them — across teams, vendors, and environments — you do.
+Joch AI makes autonomous agents visible, governed, portable, and accountable.
 
-## The five pillars
+## The MVP wedge
+
+The first product is **Joch Gateway**:
+
+```text
+Agent
+  -> Joch Gateway
+  -> Policy check
+  -> Approval if required
+  -> MCP server / API / tool
+  -> Audit log
+  -> Agent
+```
+
+Every agent framework needs tools. MCP adoption creates tool sprawl. Tool use creates security and compliance risk. Joch AI gives teams one audit and policy layer without forcing them to rewrite agents.
+
+## What Joch AI gives teams
 
 <div class="grid cards" markdown>
 
@@ -36,118 +55,59 @@ If you are writing an agent today, you do not need Joch. If you are operating te
 
     ---
 
-    A single system of record for every agent, model, tool, MCP server, memory, RAG source, deployment, and owner — regardless of which SDK built them.
+    Discover and register agents, tools, MCP servers, owners, policies, risk levels, and last execution state.
 
-    [Read the Inventory pillar](pillars/inventory.md)
+    [Read the MVP scope](mvp/scope.md)
 
 -   :material-shield-key-outline: **Governance**
 
     ---
 
-    Portable policy-as-code for tool use, data access, approvals, model choice, memory writes, and budgets — enforced uniformly across SDKs.
+    Enforce policy-as-code before risky tool calls, including external writes, code execution, financial actions, and privileged operations.
 
-    [Read the Governance pillar](pillars/governance.md)
+    [Read policy and approvals](architecture/policy-approvals.md)
 
--   :material-swap-horizontal-bold: **Portability**
-
-    ---
-
-    One agent record runs locally, in Docker, on Kubernetes, or via managed runtimes; conversation state migrates across providers without losing tools, memory, or artifacts.
-
-    [Read the Portability pillar](pillars/portability.md)
-
--   :material-radar: **Observability**
+-   :material-server-security: **MCP Gateway**
 
     ---
 
-    Every model call, tool call, memory write, RAG retrieval, approval, cost line item, and artifact is captured as an event — exported to OpenTelemetry, OCSF, and your existing stack.
+    Scan MCP servers, detect changed tools, classify side effects, proxy calls, and quarantine risky capabilities.
 
-    [Read the Observability pillar](pillars/observability.md)
+    [Read the gateway architecture](architecture/gateway.md)
 
--   :material-source-branch-check: **Release Management**
+-   :material-clipboard-check-outline: **Approvals**
 
     ---
 
-    Version, eval, diff, promote, roll back, and audit agents like production software, with quality gates that block regressions before they reach customers.
+    Pause external writes and other risky calls until a human approves or rejects them.
 
-    [Read the Release Management pillar](pillars/release-management.md)
+    [Read the approval resource](resources/approval.md)
+
+-   :material-text-box-search-outline: **Audit**
+
+    ---
+
+    Persist tool calls, decisions, approvals, execution events, and ABOMs as durable records.
+
+    [Read the data model](architecture/data-model.md)
+
+-   :material-package-variant-closed: **ABOM**
+
+    ---
+
+    Generate an Agent Bill of Materials covering models, tools, MCP servers, memories, RAG sources, secrets referenced, policies, risk flags, and deployments.
+
+    [Read the ABOM spec](resources/abom.md)
 
 </div>
-
-## The strongest wedge
-
-> **Joch is the secure MCP and tool-call gateway with an agent inventory layer.**
-
-Every major SDK is adopting [Model Context Protocol (MCP)](https://modelcontextprotocol.io) and tool calling. That creates a new enterprise problem — untrusted servers, unknown capabilities, no central approval, no shared audit trail, no schema-drift detection, no side-effect controls, no portable policy. Joch makes the tool boundary safe, then expands outward into full agent fleet management.
-
-[Explore the MCP gateway design](architecture/mcp-gateway.md) · [Explore the tool gateway design](architecture/tool-gateway.md)
-
-## OWASP AOS conformance
-
-Joch implements the **[OWASP Agent Observability Standard](https://aos.owasp.org/)** as its conformance baseline:
-
-- **Inspect** — every Joch agent emits an Agent Bill of Materials ([AgBOM](aos/agbom.md)) extending CycloneDX, SPDX, and SWID.
-- **Instrument** — Joch exposes the AOS [hooks](aos/hooks.md) (`agentTrigger`, `toolCallRequest`, `toolCallResult`, `message`, `memoryContextRetrieval`, `memoryStore`, `knowledgeRetrieval`, MCP, A2A) so any Guardian Agent can `allow`, `deny`, or `modify` agent decisions.
-- **Trace** — Joch trace [events](aos/events.md) extend OpenTelemetry and OCSF schemas.
-
-[Read the AOS conformance index](aos/index.md)
 
 ## Where to go next
 
-<div class="grid cards" markdown>
+- [Get started](getting-started/index.md) with a local install and first governed agent.
+- [Read the positioning](strategy/positioning.md) to understand what Joch AI is and is not.
+- [Review the MVP roadmap](mvp/roadmap.md) for the phased delivery plan.
+- [Browse the resource model](resources/index.md) for the YAML API surface.
 
--   :material-compass-outline: **Concepts**
+## Final strategic sentence
 
-    ---
-
-    The product positioning, the five pillars in depth, the comparison against vendor SDKs, and a shared glossary.
-
-    [Start with concepts](concepts/index.md)
-
--   :material-cog-outline: **Architecture**
-
-    ---
-
-    The control plane, data plane, framework adapters, tool and MCP gateways, policy engine, model router, and trust model.
-
-    [Read the architecture](architecture/index.md)
-
--   :material-shape-outline: **Resources**
-
-    ---
-
-    Kubernetes-style YAML specifications for every resource kind in the Joch control plane.
-
-    [Browse the resource catalog](specs/index.md)
-
--   :material-shield-check-outline: **AOS Conformance**
-
-    ---
-
-    How Joch implements the OWASP Agent Observability Standard for inspect, instrument, and trace.
-
-    [Open the AOS section](aos/index.md)
-
--   :material-rocket-launch-outline: **Use Cases**
-
-    ---
-
-    End-to-end operator workflows: fleet inventory, MCP governance, cross-provider migration, cost control, release gates, approvals.
-
-    [See the use cases](use-cases/index.md)
-
--   :material-briefcase-variant-outline: **Business**
-
-    ---
-
-    Product positioning, moat, competitive landscape, revenue models, target audience, go-to-market, open-core strategy, and roadmap.
-
-    [Open the business section](business/index.md)
-
-</div>
-
-## Open source
-
-Joch is released under the Apache-2.0 license by [PeasantsAI](https://github.com/peasantsai). The control-plane code, resource specs, AOS adapters, MCP gateway, and SDK adapters are all open. Hosted, multi-tenant features (`joch cloud`) are commercial.
-
-[Read the contributing guide](community/contributing.md) · [Project governance](community/governance.md)
+> **Joch AI wins by becoming the neutral control layer for agent action: the place where every agent, tool, policy, approval, and audit record comes together.**
