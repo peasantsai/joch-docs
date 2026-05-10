@@ -39,7 +39,7 @@ You **add** a control plane on top:
 - Each agent gets registered in Joch via a [framework adapter](../architecture/framework-adapters.md).
 - Tool calls flow through the [Joch tool gateway](../architecture/tool-gateway.md), enforcing the same [policies](../specs/kubernetes/policy.md) regardless of SDK.
 - MCP servers register with the [MCP gateway](../architecture/mcp-gateway.md), where they are pinned, scanned, and version-tracked.
-- All decisions emit [AOS-aligned trace events](../aos/events.md) and update the per-agent [ABOM](../specs/kubernetes/abom.md).
+- All decisions emit [AOS-aligned trace events](../aos/events.md) and update the per-agent [AgBOM](../specs/kubernetes/agbom.md).
 
 ## Why this is not "yet another wrapper"
 
@@ -48,6 +48,6 @@ The control-plane category is durable because:
 - **Coverage is the value.** A wrapper around one SDK is replaceable. A control plane that knows about every SDK in the org is not.
 - **Policy is portable.** Each SDK does guardrails differently; Joch defines the rule once and enforces it at the boundary they all cross — the tool call, the model call, the memory write.
 - **State outlives runtimes.** When a team migrates from OpenAI to Claude (or vice versa), Joch keeps the conversation, the memory references, and the artifact graph intact.
-- **Compliance is cumulative.** ABOM, audit, traces, evals, approvals — they only get more valuable the longer they exist. The control plane is the only place where they can accrete.
+- **Compliance is cumulative.** AgBOM, audit, traces, evals, approvals — they only get more valuable the longer they exist. The control plane is the only place where they can accrete.
 
 For the underlying business case, see [moat](../business/moat.md) and [revenue models](../business/revenue-models.md).

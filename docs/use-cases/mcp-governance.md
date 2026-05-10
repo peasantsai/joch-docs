@@ -74,18 +74,18 @@ A quarantined server is taken out of rotation immediately, fleet-wide. The trace
 ### 5. Audit the dependency graph
 
 ```bash
-joch abom ls --using-mcpserver github
-joch abom support-triage --diff --from 16 --to 17
+joch agbom ls --using-mcpserver github
+joch agbom support-triage --diff --from 16 --to 17
 ```
 
-ABOM diffs make MCP changes auditable: which version was pinned, when, by whom, with what trust score.
+AgBOM diffs make MCP changes auditable: which version was pinned, when, by whom, with what trust score.
 
 ## Resources involved
 
 - [`MCPServer`](../specs/kubernetes/mcpserver.md)
 - [`Tool`](../specs/kubernetes/tool.md), [`ToolCall`](../specs/kubernetes/toolcall.md)
 - [`Policy`](../specs/kubernetes/policy.md)
-- [`Trace`](../specs/kubernetes/trace.md), [`ABOM`](../specs/kubernetes/abom.md)
+- [`Trace`](../specs/kubernetes/trace.md), [`AgBOM`](../specs/kubernetes/agbom.md)
 
 ## Outcome
 

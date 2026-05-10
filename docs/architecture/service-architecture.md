@@ -14,7 +14,7 @@ Joch is a control plane plus a thin data plane, packaged as a small set of Go an
 │  Layer 2 — Control plane services                              │
 │  apiserver, resource store, admission, policy engine,          │
 │  controller manager, compiler, scheduler, approval service,    │
-│  budget service, eval service, ABOM service                    │
+│  budget service, eval service, AgBOM service                    │
 └──────────────────────────┬─────────────────────────────────────┘
                            ▼
 ┌────────────────────────────────────────────────────────────────┐
@@ -46,7 +46,7 @@ joch-trace          trace ingest + export
 joch-operator       Kubernetes operator (CRDs + controllers)
 ```
 
-Later, as scale demands, the natural splits are: model router, policy engine, approval service, eval service, ABOM service, observability.
+Later, as scale demands, the natural splits are: model router, policy engine, approval service, eval service, AgBOM service, observability.
 
 ## Pluggable interfaces
 
@@ -101,7 +101,7 @@ Installed: CRDs, Helm chart, Operator, Deployments per service, Services, Networ
                  ┌──────────────────────────┐
                  │ Joch Cloud Control Plane │
                  │ specs, UI, policies,     │
-                 │ traces, evals, ABOM      │
+                 │ traces, evals, AgBOM      │
                  └─────────────┬────────────┘
                                │ secure tunnel / API
                                ▼
@@ -155,7 +155,7 @@ memory              POST /v1/memory/query, POST /v1/memory/write
 rag                 POST /v1/rag/retrieve, POST /v1/rag/index
 trace               OTLP / OCSF ingest, query API
 approval            POST /v1/approvals, POST /v1/approvals/{id}/decide
-abom                GET /v1/abom/{agent}, POST /v1/abom/{agent}/refresh
+agbom                GET /v1/agbom/{agent}, POST /v1/agbom/{agent}/refresh
 ```
 
 Full OpenAPI / Proto definitions live in [`peasantsai/joch-spec`](https://github.com/peasantsai/joch-spec).
@@ -188,7 +188,7 @@ ApprovalDenied
 A2AMessageSent
 A2AMessageReceived
 ProviderSwitched
-ABOMUpdated
+AgBOMUpdated
 ExecutionSucceeded
 ExecutionFailed
 BudgetExceeded

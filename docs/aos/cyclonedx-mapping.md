@@ -1,6 +1,6 @@
 # CycloneDX Mapping
 
-Joch emits per-agent ABOMs as [CycloneDX 1.6](https://cyclonedx.org/) documents. The mapping below shows how Joch resources translate into CycloneDX components, dependencies, and properties.
+Joch emits per-agent AgBOMs as [CycloneDX 1.6](https://cyclonedx.org/) documents. The mapping below shows how Joch resources translate into CycloneDX components, dependencies, and properties.
 
 ## Document shape
 
@@ -12,7 +12,7 @@ Joch emits per-agent ABOMs as [CycloneDX 1.6](https://cyclonedx.org/) documents.
   "metadata": {
     "timestamp": "<UTC ISO-8601>",
     "tools": [
-      { "name": "joch-abom", "version": "<joch-version>" }
+      { "name": "joch-agbom", "version": "<joch-version>" }
     ],
     "authors": [
       { "name": "<owner team>", "email": "<owner email>" }
@@ -24,7 +24,7 @@ Joch emits per-agent ABOMs as [CycloneDX 1.6](https://cyclonedx.org/) documents.
 }
 ```
 
-`metadata.version` corresponds to the [`ABOM`](../specs/kubernetes/abom.md) resource generation, so consumers can detect changes without diffing every component.
+`metadata.version` corresponds to the [`AgBOM`](../specs/kubernetes/agbom.md) resource generation, so consumers can detect changes without diffing every component.
 
 ## Component mapping
 
@@ -94,7 +94,7 @@ The `dependencies` array models the agent → component graph:
   "version": 17,
   "metadata": {
     "timestamp": "2026-05-10T10:00:00Z",
-    "tools": [{ "name": "joch-abom", "version": "1.0.0" }],
+    "tools": [{ "name": "joch-agbom", "version": "1.0.0" }],
     "authors": [{ "name": "support-platform", "email": "support-platform@example.com" }]
   },
   "components": [
@@ -162,7 +162,7 @@ The `dependencies` array models the agent → component graph:
     }
   ],
   "signatures": [
-    { "value": "<base64>", "keyId": "joch-abom-signing-key" }
+    { "value": "<base64>", "keyId": "joch-agbom-signing-key" }
   ]
 }
 ```

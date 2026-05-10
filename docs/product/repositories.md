@@ -59,7 +59,7 @@ peasantsai/joch/
     policy/
     approvals/
     artifacts/
-    abom/
+    agbom/
     observability/
     adapters/
       framework/      # one per SDK
@@ -98,7 +98,7 @@ peasantsai/joch-spec/
     mcpserver.schema.json
     policy.schema.json
     approval.schema.json
-    abom.schema.json
+    agbom.schema.json
     trace.schema.json
     execution.schema.json
     conversation.schema.json
@@ -128,7 +128,7 @@ peasantsai/joch-spec/
     0001-resource-model.md
     0002-execution-model.md
     0003-portable-policy.md
-    0004-abom.md
+    0004-agbom.md
     0005-aos-conformance.md
 ```
 
@@ -176,7 +176,7 @@ joch run support-triage "Triage incoming queue"
 joch trace exec-20260510-001
 joch approvals ls
 joch mcp ls
-joch abom support-triage
+joch agbom support-triage
 joch registry search policies
 joch promote support-triage --from staging --to prod
 ```

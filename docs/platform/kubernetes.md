@@ -55,7 +55,7 @@ Joch understands the agents.
 
 A Joch [`Deployment`](../specs/kubernetes/deployment.md) reconciles into a Kubernetes Deployment via the [Kubernetes runtime adapter](../architecture/service-architecture.md). A Joch [`Execution`](../specs/kubernetes/execution.md) reconciles into a Kubernetes Job. A Joch [`Secret`](../specs/kubernetes/secret.md) references a Kubernetes Secret.
 
-The reverse is not true: a Kubernetes Deployment knows nothing about an `Agent`, a `ModelRoute`, an `MCPServer`, an `ABOM`, or a `Policy`. That is the layer Joch adds.
+The reverse is not true: a Kubernetes Deployment knows nothing about an `Agent`, a `ModelRoute`, an `MCPServer`, an `AgBOM`, or a `Policy`. That is the layer Joch adds.
 
 ## When raw Kubernetes is enough
 

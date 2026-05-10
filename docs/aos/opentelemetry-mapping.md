@@ -15,7 +15,7 @@ Execution                  root span: one per joch Execution
     HookDecision           short-lived; one per hook decision
   Approval                 one per approval (parallel to AgentRun)
   Handoff                  one per A2A handoff
-  ABOMUpdate               one per ABOM regeneration
+  AgBOMUpdate              one per AgBOM regeneration
 ```
 
 The root `Execution` span carries the trace id propagated to every child.
@@ -102,7 +102,7 @@ Span events emit additional payloads that are not span-level attributes:
 joch.policy.denied
 joch.budget.exceeded
 joch.provider.switched
-joch.abom.updated
+joch.agbom.updated
 joch.mcp.schema_drift
 ```
 
@@ -120,7 +120,7 @@ joch.modelcalls.fallback_rate            gauge
 joch.policy.denials.count                counter
 joch.approvals.queue_depth               gauge
 joch.approvals.time_to_decision_ms       histogram
-joch.abom.updates.count                  counter
+joch.agbom.updates.count                  counter
 ```
 
 ## Exporter configuration

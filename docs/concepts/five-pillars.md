@@ -12,7 +12,7 @@ Capabilities:
 
 - Discover agents written with OpenAI Agents SDK, Claude Agent SDK, Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, or custom Python/TypeScript code.
 - Persist a versioned record per agent, including its framework adapter, model policy, tool list, MCP servers, memory bindings, owner, and policies.
-- Generate a per-agent [Agent Bill of Materials](../specs/kubernetes/abom.md) (ABOM) extending CycloneDX, SPDX, and SWID, on demand and on every change.
+- Generate a per-agent [Agent Bill of Materials](../specs/kubernetes/agbom.md) (AgBOM) extending CycloneDX, SPDX, and SWID, on demand and on every change.
 - Browse, query, and label agents through the CLI, API, and web console.
 
 [Read the Inventory pillar in depth](../pillars/inventory.md)

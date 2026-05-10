@@ -1,6 +1,6 @@
 # Release Gates
 
-> A new version of a customer-facing agent must not promote into production unless a quality eval passes, an ABOM diff shows no high-risk components, and a release manager approves.
+> A new version of a customer-facing agent must not promote into production unless a quality eval passes, an AgBOM diff shows no high-risk components, and a release manager approves.
 
 ## Symptoms
 
@@ -11,7 +11,7 @@
 
 ## What Joch does
 
-Joch's [Release Management pillar](../pillars/release-management.md) wires [`Eval`](../specs/kubernetes/eval.md), [`ABOM`](../specs/kubernetes/abom.md), and [`Approval`](../specs/kubernetes/approval.md) into `joch promote` as enforceable gates.
+Joch's [Release Management pillar](../pillars/release-management.md) wires [`Eval`](../specs/kubernetes/eval.md), [`AgBOM`](../specs/kubernetes/agbom.md), and [`Approval`](../specs/kubernetes/approval.md) into `joch promote` as enforceable gates.
 
 ## Walkthrough
 
@@ -63,7 +63,7 @@ joch eval run support-triage-quality --target staging
 joch promote support-triage --from staging --to prod
 ```
 
-The promote command fails if the eval is below threshold, if the ABOM diff flags a high-risk component, or if the release manager has not approved.
+The promote command fails if the eval is below threshold, if the AgBOM diff flags a high-risk component, or if the release manager has not approved.
 
 ### 4. Roll back
 
@@ -80,11 +80,11 @@ joch get releases --agent support-triage
 joch describe release rel-2026-05-10-001
 ```
 
-Each release record carries the agent diff, eval results, ABOM diff, approver, environment, runtime context, and timestamp.
+Each release record carries the agent diff, eval results, AgBOM diff, approver, environment, runtime context, and timestamp.
 
 ## Resources involved
 
-- [`Eval`](../specs/kubernetes/eval.md), [`ABOM`](../specs/kubernetes/abom.md), [`Approval`](../specs/kubernetes/approval.md)
+- [`Eval`](../specs/kubernetes/eval.md), [`AgBOM`](../specs/kubernetes/agbom.md), [`Approval`](../specs/kubernetes/approval.md)
 - [`Deployment`](../specs/kubernetes/deployment.md), [`Environment`](../specs/kubernetes/environment.md)
 - [`Policy`](../specs/kubernetes/policy.md)
 

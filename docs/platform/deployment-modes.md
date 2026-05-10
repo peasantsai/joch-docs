@@ -41,7 +41,7 @@ Best for multi-tenant, scale-out, governed production fleets.
 
 ## Managed SaaS + customer runtime
 
-For organizations that want Joch's UI, traces, and ABOM hosted, but tools, memory, and provider calls inside the customer environment.
+For organizations that want Joch's UI, traces, and AgBOM hosted, but tools, memory, and provider calls inside the customer environment.
 
 ```text
 joch Cloud control plane (multi-tenant)

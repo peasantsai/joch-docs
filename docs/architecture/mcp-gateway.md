@@ -142,9 +142,9 @@ Inbound MCP messages are scanned for prompt-injection patterns. Patterns can be 
 - annotate the result with a warning the agent can take into account,
 - create an incident.
 
-## ABOM contribution
+## AgBOM contribution
 
-Every MCP server contributes to the per-agent [ABOM](../specs/kubernetes/abom.md). The ABOM lists each server, its pinned version, its discovered capabilities, its publisher, and its current trust score. Operators inspect the ABOM to answer "what does this agent depend on, and is any of it risky?"
+Every MCP server contributes to the per-agent [AgBOM](../specs/kubernetes/agbom.md). The AgBOM lists each server, its pinned version, its discovered capabilities, its publisher, and its current trust score. Operators inspect the AgBOM to answer "what does this agent depend on, and is any of it risky?"
 
 ## Operator commands
 
@@ -168,4 +168,4 @@ Every SDK in the market is rapidly adding MCP support. As that adoption widens, 
 - compliance teams can prove what each agent depends on,
 - operators can quarantine a bad server in seconds, fleet-wide.
 
-That combination — registry + firewall + AOS hooks + ABOM + sandboxing + drift detection — does not exist in any single SDK and is hard to retrofit. It is therefore both a sharp **first wedge** and a durable **defensible position**.
+That combination — registry + firewall + AOS hooks + AgBOM + sandboxing + drift detection — does not exist in any single SDK and is hard to retrofit. It is therefore both a sharp **first wedge** and a durable **defensible position**.

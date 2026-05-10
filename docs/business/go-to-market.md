@@ -20,7 +20,7 @@ From the wedge, Joch expands into inventory, policy, state, evals, and release g
 ### Phase 1 — Awareness via standards (months 0-6)
 
 - AOS conformance from day one. Public mapping pages: [AgBOM](../aos/agbom.md), [Hooks](../aos/hooks.md), [Events](../aos/events.md).
-- Engineering blog posts and conference talks on cross-SDK governance, MCP supply chain, and ABOM.
+- Engineering blog posts and conference talks on cross-SDK governance, MCP supply chain, and AgBOM.
 - Open registry and example agents in `peasantsai/joch-examples` and `peasantsai/joch-registry`.
 - Visible position in the OWASP AOS, MCP, and OpenTelemetry GenAI working groups.
 
@@ -79,7 +79,7 @@ The motion is intentionally not "demo-and-quote." Joch must be installable and u
 |---|---|
 | Awareness | GitHub stars, docs visits, standards-track issues touched |
 | Adoption | unique install fingerprints, agents registered per install, framework adapters used |
-| Activation | weekly active operators, traces ingested, ABOMs generated |
+| Activation | weekly active operators, traces ingested, AgBOMs generated |
 | Conversion | Joch Cloud sign-ups, Team conversions, Enterprise pipeline |
 | Retention | net revenue retention, agent count growth, log volume growth |
 

@@ -22,8 +22,8 @@ Joch's category is **agent operations control plane**. The most common false com
 The full capability matrix lives in [Comparison](../concepts/comparison.md). Summarized:
 
 - vendor SDKs do **build**, not **operate**;
-- generic LLM observability tools do **traces**, not **inventory + policy + ABOM**;
-- model gateways do **routing**, not **governance + ABOM + state**;
+- generic LLM observability tools do **traces**, not **inventory + policy + AgBOM**;
+- model gateways do **routing**, not **governance + AgBOM + state**;
 - MCP-only gateways do **MCP**, not **the cross-SDK control plane**;
 - platform engineering tools catalog **services**, not **agents and their dependencies**.
 

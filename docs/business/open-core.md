@@ -5,7 +5,7 @@ Joch is open-core: the control-plane core is Apache-2.0 and complete enough to r
 ## Principles
 
 1. **Generous core.** The OSS surface must be sufficient for real production deployments. A crippled OSS is a one-quarter advantage and a multi-year reputation cost.
-2. **No paywalled basics.** Inventory, traces, ABOM, hooks, gateways, model routing, and core policy belong in the OSS.
+2. **No paywalled basics.** Inventory, traces, AgBOM, hooks, gateways, model routing, and core policy belong in the OSS.
 3. **Standards-first.** AOS conformance, OpenTelemetry, OCSF, CycloneDX, SPDX, SWID — all in OSS. Standards alignment is not a moat; it is table stakes.
 4. **Honest boundary.** What is commercial is so because it is **operationally** different (multi-tenant, hosted, signed, compliance-attested), not because we removed a feature from OSS.
 5. **Single trademark.** "Joch" is the canonical project; forks may exist by license, but they cannot use the trademark.
@@ -20,7 +20,7 @@ joch-gateway (tool gateway, MCP gateway, secret broker)
 joch-router (model router)
 joch-memory (memory + RAG)
 joch-trace (OTLP + OCSF exporters)
-joch-abom (CycloneDX + SPDX + SWID emitters)
+joch-agbom (CycloneDX + SPDX + SWID emitters)
 joch-operator (Kubernetes CRDs + controllers)
 joch console (web UI)
 framework adapters (one repo per SDK)

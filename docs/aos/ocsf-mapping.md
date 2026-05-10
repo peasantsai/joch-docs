@@ -4,7 +4,7 @@ Joch emits security-relevant trace events as [Open Cybersecurity Schema Framewor
 
 ## Why OCSF
 
-Agent fleets produce security-relevant signals: policy denials, approvals, MCP scanning hits, A2A messages, ABOM updates, prompt-injection scan results. OCSF is the right schema for those signals because it is the schema security tools speak.
+Agent fleets produce security-relevant signals: policy denials, approvals, MCP scanning hits, A2A messages, AgBOM updates, prompt-injection scan results. OCSF is the right schema for those signals because it is the schema security tools speak.
 
 ## Event class mapping
 
@@ -21,7 +21,7 @@ Agent fleets produce security-relevant signals: policy denials, approvals, MCP s
 | `A2AMessageSent` / `A2AMessageReceived` | Network Activity | 4001 |
 | `MemoryWritten` (PII / customer-tier) | Application Activity | 8001 |
 | `KnowledgeRetrieved` (PII / regulated source) | Application Activity | 8001 |
-| `ABOMUpdated` | Process Activity | 1003 |
+| `AgBOMUpdated` | Process Activity | 1003 |
 | `BudgetExceeded` | Application Activity | 8001 |
 | `ProviderSwitched` | Application Activity | 8001 |
 

@@ -36,7 +36,7 @@ For significant changes (new resource kinds, breaking schema changes, new gatewa
 0001-resource-model.md
 0002-execution-model.md
 0003-portable-policy.md
-0004-abom.md
+0004-agbom.md
 0005-aos-conformance.md
 ```
 

@@ -17,7 +17,7 @@ joch-scheduler           assigns executions to workers
 joch-approval-service    routes approval requests; records decisions
 joch-budget-service      tracks cost and enforces caps
 joch-eval-service        runs evals on a schedule, on demand, on promotion
-joch-abom-service        generates and refreshes per-agent ABOM
+joch-agbom-service        generates and refreshes per-agent AgBOM
 joch-secret-broker       resolves Secret references at the right boundary
 ```
 
@@ -108,7 +108,7 @@ spec:
       - external-send-requires-approval@v2
   observability:
     traceEndpoint: http://joch-trace
-    abomEndpoint: http://joch-abom
+    abomEndpoint: http://joch-agbom
 ```
 
 Workers run from the manifest, not from raw YAML. The compiler is the single place where references are resolved and capability checks happen.
@@ -133,7 +133,7 @@ For SaaS deployments, an additional `Tenant` boundary wraps namespaces. See [Tru
 POST   /v1/resources/apply
 GET    /v1/namespaces/{ns}/agents
 GET    /v1/namespaces/{ns}/agents/{name}
-GET    /v1/namespaces/{ns}/agents/{name}/abom
+GET    /v1/namespaces/{ns}/agents/{name}/agbom
 GET    /v1/namespaces/{ns}/executions
 POST   /v1/namespaces/{ns}/executions
 GET    /v1/namespaces/{ns}/toolcalls

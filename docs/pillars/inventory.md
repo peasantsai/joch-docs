@@ -17,7 +17,7 @@ Tool               one record per callable function
 MCPServer          one record per MCP server (with discovery + version pinning)
 ToolCall           one record per concrete tool invocation
 Policy             portable policy-as-code
-ABOM               agent bill of materials extending CycloneDX/SPDX/SWID
+AgBOM               agent bill of materials extending CycloneDX/SPDX/SWID
 Memory             working / semantic / episodic memory bindings
 RAG                indices + their KnowledgeSources
 Conversation       vendor-neutral dialog history
@@ -90,8 +90,8 @@ joch get agents --owner support-platform --env prod
 joch describe agent support-triage
 joch get tools --agent support-triage
 joch get executions --agent support-triage --since 24h
-joch abom support-triage
-joch abom support-triage --format cyclonedx > support-triage.cdx.json
+joch agbom support-triage
+joch agbom support-triage --format cyclonedx > support-triage.cdx.json
 ```
 
 The CLI mirrors the resource catalog. The web console exposes the same data with filters, search, and ownership views.
@@ -105,7 +105,7 @@ Without inventory, every other pillar is best-effort:
 - **Observability** without inventory produces orphaned traces with no owner, no version, and no policy context.
 - **Release management** without inventory cannot version, diff, or roll back what it cannot identify.
 
-The inventory pillar is also the prerequisite for compliance and audit: ABOM, ownership, and version history are inventory operations on top of the agent record.
+The inventory pillar is also the prerequisite for compliance and audit: AgBOM, ownership, and version history are inventory operations on top of the agent record.
 
 ## Acceptance criteria
 

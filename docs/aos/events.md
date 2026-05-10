@@ -33,7 +33,7 @@ ApprovalDenied              an approval was denied
 A2AMessageSent              an outbound A2A message was sent
 A2AMessageReceived          an inbound A2A message was received
 ProviderSwitched            a conversation switched providers
-ABOMUpdated                 the per-agent ABOM was refreshed
+AgBOMUpdated                 the per-agent AgBOM was refreshed
 ExecutionSucceeded          an execution completed successfully
 ExecutionFailed             an execution failed
 BudgetExceeded              a budget was exceeded

@@ -51,7 +51,7 @@ joch run support-triage "Triage incoming queue"
 joch trace exec-20260510-001
 joch approvals ls
 joch mcp ls
-joch abom support-triage
+joch agbom support-triage
 joch promote support-triage --from staging --to prod
 joch cost by-team --since 7d
 ```

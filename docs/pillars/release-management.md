@@ -85,7 +85,7 @@ A release gate is a check that runs before a promotion is allowed:
 Eval gate           required eval must pass thresholds
 Approval gate       a designated team must approve
 Policy gate         the new spec must pass all policy validations
-ABOM gate           ABOM diff must show no high-risk new components
+AgBOM gate           AgBOM diff must show no high-risk new components
 Budget gate         projected cost must stay below budget
 Latency gate        latency regression must stay below threshold
 ```
@@ -151,4 +151,4 @@ A team operating Joch's Release Management pillar can:
 - prove that prod agent X is at version Y, applied at time T, by operator O, with policies P at versions V,
 - block a release that drops `task_success` below threshold, with an actionable failure message,
 - roll back a regression in one command, with the rollback recorded in the audit log,
-- diff two agent versions and see the structural change plus the referenced policy and ABOM deltas.
+- diff two agent versions and see the structural change plus the referenced policy and AgBOM deltas.

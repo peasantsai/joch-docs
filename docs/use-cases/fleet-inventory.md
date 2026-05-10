@@ -47,15 +47,15 @@ joch get mcpservers --in-use
 joch get models --in-use
 ```
 
-### 4. Generate ABOM
+### 4. Generate AgBOM
 
 ```bash
-joch abom support-triage
-joch abom support-triage --format cyclonedx > support-triage.cdx.json
-joch abom ls --high-risk
+joch agbom support-triage
+joch agbom support-triage --format cyclonedx > support-triage.cdx.json
+joch agbom ls --high-risk
 ```
 
-The [ABOM](../specs/kubernetes/abom.md) is the inventory's audit-grade output: every dependency, with version and owner.
+The [AgBOM](../specs/kubernetes/agbom.md) is the inventory's audit-grade output: every dependency, with version and owner.
 
 ### 5. Answer the hard questions
 
@@ -75,7 +75,7 @@ Each query joins the inventory graph: agent → tool, agent → memory, agent �
 - [`Tool`](../specs/kubernetes/tool.md), [`MCPServer`](../specs/kubernetes/mcpserver.md)
 - [`Model`](../specs/kubernetes/model.md), [`ModelRoute`](../specs/kubernetes/model-route.md)
 - [`Memory`](../specs/kubernetes/memory.md), [`RAG`](../specs/kubernetes/rag.md), [`KnowledgeSource`](../specs/kubernetes/knowledge-source.md)
-- [`ABOM`](../specs/kubernetes/abom.md)
+- [`AgBOM`](../specs/kubernetes/agbom.md)
 - [`Team / Namespace`](../specs/kubernetes/team-namespace.md), [`Environment`](../specs/kubernetes/environment.md)
 
 ## Outcome

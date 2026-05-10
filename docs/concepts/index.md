@@ -34,7 +34,7 @@ These pages establish the shared vocabulary and product position of Joch before 
 
     ---
 
-    Definitions for every term used across the rest of the docs — agent record, framework adapter, ABOM, AOS, tool gateway, model route, hook, and more.
+    Definitions for every term used across the rest of the docs — agent record, framework adapter, AgBOM, AOS, tool gateway, model route, hook, and more.
 
     [Read the glossary](glossary.md)
 

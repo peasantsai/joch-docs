@@ -18,11 +18,11 @@ Each SDK does guardrails differently. Joch's [Policy](../specs/kubernetes/policy
 
 ### 4. Historical traces, evals, and approvals
 
-Trace history, eval results, approval decisions, and ABOM diffs only grow more valuable over time. They are the substrate of audit, regression analysis, and compliance. The longer Joch is in place, the more switching cost the customer takes on by moving away.
+Trace history, eval results, approval decisions, and AgBOM diffs only grow more valuable over time. They are the substrate of audit, regression analysis, and compliance. The longer Joch is in place, the more switching cost the customer takes on by moving away.
 
 ### 5. Trusted registry
 
-The [registry](#) of vetted MCP servers, policies, agent templates, and tool definitions becomes a network effect: more contributors → better catalog → more adoption → more contributors. CycloneDX/SPDX/SWID signing through Joch ABOM amplifies the trust signal further.
+The [registry](#) of vetted MCP servers, policies, agent templates, and tool definitions becomes a network effect: more contributors → better catalog → more adoption → more contributors. CycloneDX/SPDX/SWID signing through Joch AgBOM amplifies the trust signal further.
 
 ### 6. Enterprise deployment integrations
 

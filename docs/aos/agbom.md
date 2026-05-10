@@ -4,7 +4,7 @@ AgBOM — Agent Bill of Materials — is the **inspect** pillar of OWASP AOS. It
 
 > AgBOM dynamically adapts to reflect the rapid iteration and evolution of agent architectures, especially in real-time or distributed environments. — [OWASP AOS](https://aos.owasp.org/)
 
-Joch implements AgBOM through the [`ABOM`](../specs/kubernetes/abom.md) resource. Each agent has its own ABOM record; the record is regenerated on every change and emitted in CycloneDX, SPDX, and SWID.
+Joch implements AgBOM through the [`AgBOM`](../specs/kubernetes/agbom.md) resource. Each agent has its own AgBOM record; the record is regenerated on every change and emitted in CycloneDX, SPDX, and SWID.
 
 ## Why AgBOM exists
 
@@ -45,7 +45,7 @@ AgBOM is dynamic. Joch refreshes it when any of the following change:
 - a policy that applies to the agent,
 - the framework adapter version.
 
-The `ABOM.refresh.onChange` flag enables automatic regeneration. `ABOM.refresh.schedule` adds a periodic refresh as a safety net.
+The `AgBOM.refresh.onChange` flag enables automatic regeneration. `AgBOM.refresh.schedule` adds a periodic refresh as a safety net.
 
 ## Output formats
 
@@ -58,35 +58,35 @@ The `ABOM.refresh.onChange` flag enables automatic regeneration. `ABOM.refresh.s
 ## Operator commands
 
 ```bash
-joch abom support-triage
-joch abom support-triage --format cyclonedx > support-triage.cdx.json
-joch abom support-triage --format spdx     > support-triage.spdx.json
-joch abom support-triage --format swid     > support-triage.swid.xml
-joch abom support-triage --diff --from 16 --to 17
-joch abom ls --high-risk
+joch agbom support-triage
+joch agbom support-triage --format cyclonedx > support-triage.cdx.json
+joch agbom support-triage --format spdx     > support-triage.spdx.json
+joch agbom support-triage --format swid     > support-triage.swid.xml
+joch agbom support-triage --diff --from 16 --to 17
+joch agbom ls --high-risk
 ```
 
-The `--high-risk` filter surfaces agents whose ABOM contains components below trust thresholds, with unpinned MCP servers, or with policy violations.
+The `--high-risk` filter surfaces agents whose AgBOM contains components below trust thresholds, with unpinned MCP servers, or with policy violations.
 
 ## Signing
 
-Joch ABOM emissions can be signed with a configured key:
+Joch AgBOM emissions can be signed with a configured key:
 
 ```yaml
 signing:
   enabled: true
   keyRef:
-    name: joch-abom-signing-key
+    name: joch-agbom-signing-key
 ```
 
 Signed BOMs are written alongside the unsigned ones; downstream consumers can verify provenance.
 
 ## Audit and compliance
 
-For regulated industries, Joch ABOM forms the basis of agent supply-chain audits. Auditors can request:
+For regulated industries, Joch AgBOM forms the basis of agent supply-chain audits. Auditors can request:
 
-- the ABOM at the time of any historical execution (via `Execution.status.abomSnapshotRef`),
-- the diff between two ABOM generations,
+- the AgBOM at the time of any historical execution (via `Execution.status.abomSnapshotRef`),
+- the diff between two AgBOM generations,
 - the full set of tools, MCP servers, and knowledge sources reachable from a given agent at a given date.
 
 This satisfies the **inspect** pillar of AOS for audit-class compliance.

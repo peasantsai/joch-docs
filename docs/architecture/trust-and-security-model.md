@@ -76,7 +76,7 @@ Every API call, every apply, every promote, every approval, every override is an
 | Compromised SDK code | Tools and MCP go through gateways; SDK cannot bypass policy or hide cost. |
 | Stolen provider API key | Keys live in secret broker; rotation is one operator command. |
 | Cross-tenant leakage | Tenant-keyed storage; RBAC at API layer; NetworkPolicies in cluster mode. |
-| Silent regression | Eval gates, ABOM diffs, structural diffs at promote. |
+| Silent regression | Eval gates, AgBOM diffs, structural diffs at promote. |
 | Audit tampering | Immutable audit store; hash chains for high-trust deployments. |
 | Provider outage | ModelRoute fallback; capability and cost validation prevent unsafe degradation. |
 | Cost runaway | Budget service enforces per-run / per-day caps; alerts on anomaly. |

@@ -76,13 +76,13 @@ One page per Joch resource kind. All pages use the same Kubernetes-style envelop
 
     [Open spec](approval.md)
 
--   :material-format-list-bulleted-square: **ABOM**
+-   :material-format-list-bulleted-square: **AgBOM**
 
     ---
 
     Agent Bill of Materials extending OWASP AgBOM (CycloneDX, SPDX, SWID).
 
-    [Open spec](abom.md)
+    [Open spec](agbom.md)
 
 -   :material-graph-outline: **Trace**
 

@@ -40,7 +40,7 @@ End-to-end operator workflows that show what Joch is for. Each use case ties pil
 
     ---
 
-    Block agent promotions on failing evals, ABOM regressions, or missing approvals.
+    Block agent promotions on failing evals, AgBOM regressions, or missing approvals.
 
     [Read the use case](release-gates.md)
 

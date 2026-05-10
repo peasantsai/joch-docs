@@ -83,6 +83,6 @@ nightly         runs at a fixed schedule
 manual          operator-triggered only
 ```
 
-Eval runs are recorded as [`Execution`](execution.md) records under the hood, with full traces and ABOM snapshots for reproducibility.
+Eval runs are recorded as [`Execution`](execution.md) records under the hood, with full traces and AgBOM snapshots for reproducibility.
 
 [Back to the catalog](index.md)

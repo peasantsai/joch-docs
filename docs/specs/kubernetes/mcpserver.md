@@ -80,9 +80,9 @@ Recent reports have highlighted MCP risks: local-process execution, prompt-injec
 
 `trustScore` is composed from publisher allow-listing, signed manifests, schema stability, denial / error history, and any third-party allow-list. Policies can require a minimum trust score.
 
-## ABOM contribution
+## AgBOM contribution
 
-Every `MCPServer` contributes to the per-agent [`ABOM`](abom.md). The ABOM lists each server, its pinned version, its discovered capabilities, its publisher, and its trust score at the time of generation.
+Every `MCPServer` contributes to the per-agent [`AgBOM`](agbom.md). The AgBOM lists each server, its pinned version, its discovered capabilities, its publisher, and its trust score at the time of generation.
 
 ## Operator commands
 

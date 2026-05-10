@@ -34,7 +34,7 @@ ExecutionSucceeded          an execution completed successfully
 ExecutionFailed             an execution failed
 BudgetExceeded              a cost / usage budget was exceeded
 ProviderSwitched            a conversation switched providers
-ABOMUpdated                 the per-agent ABOM was refreshed
+AgBOMUpdated                 the per-agent AgBOM was refreshed
 ```
 
 Every event includes `traceId`, `spanId`, `executionId`, `agentRef`, `agentVersion`, `framework`, `model`, `tenantId`, and a payload appropriate to the event type.
@@ -44,7 +44,7 @@ Every event includes `traceId`, `spanId`, `executionId`, `agentRef`, `agentVersi
 Joch trace events extend industry-standard schemas, not proprietary ones:
 
 - **OpenTelemetry** — Spans use OTel semantic conventions where they exist (`gen_ai.system`, `gen_ai.request.model`, `gen_ai.response.model`, etc.) and add Joch-specific attributes (`joch.agent.name`, `joch.framework`, `joch.policy.id`, `joch.tenant.id`). See [OpenTelemetry Mapping](../aos/opentelemetry-mapping.md).
-- **OCSF** — Security-relevant events (policy denial, approval, A2A messages, ABOM updates) emit OCSF-compatible records. See [OCSF Mapping](../aos/ocsf-mapping.md).
+- **OCSF** — Security-relevant events (policy denial, approval, A2A messages, AgBOM updates) emit OCSF-compatible records. See [OCSF Mapping](../aos/ocsf-mapping.md).
 
 You can ship Joch traces into Grafana, Honeycomb, Datadog, Splunk, Elastic, your SIEM, or any backend that consumes OTLP and OCSF.
 

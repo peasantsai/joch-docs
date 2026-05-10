@@ -6,11 +6,11 @@ A single source of truth for the vocabulary used across Joch documentation. Wher
 
 **A2A (Agent-to-Agent)** — A protocol for inter-agent communication. Joch persists A2A interactions as `Handoff` events and exposes them through AOS-compliant hooks.
 
-**ABOM (Agent Bill of Materials)** — A machine-readable inventory of every component a Joch agent depends on: models, tools, MCP servers, knowledge sources, memory stores, policies, secrets, and deployments. Joch's ABOM extends [OWASP AgBOM](https://aos.owasp.org/) and emits CycloneDX, SPDX, and SWID. See [`ABOM`](../specs/kubernetes/abom.md).
+**AgBOM (Agent Bill of Materials)** — A machine-readable inventory of every component a Joch agent depends on: models, tools, MCP servers, knowledge sources, memory stores, policies, secrets, and deployments. Joch's AgBOM extends [OWASP AgBOM](https://aos.owasp.org/) and emits CycloneDX, SPDX, and SWID. See [`AgBOM`](../specs/kubernetes/agbom.md).
 
 **Agent** (Joch resource) — The Joch record of an agent. The agent record is framework-agnostic; the actual agent code lives in OpenAI Agents SDK, Claude Agent SDK, Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, or custom code, and is connected via a [`FrameworkAdapter`](../specs/kubernetes/framework-adapter.md). See [`Agent`](../specs/kubernetes/agent.md).
 
-**AgBOM** — See ABOM.
+**AgBOM** — See AgBOM.
 
 **AOS (Agent Observability Standard)** — The OWASP standard Joch implements for inspect, instrument, and trace. See [AOS Conformance](../aos/index.md).
 
@@ -28,7 +28,7 @@ A single source of truth for the vocabulary used across Joch documentation. Wher
 
 **Conversation** — A vendor-neutral, durable record of an agent's dialog. Survives provider migration. See [`Conversation`](../specs/kubernetes/conversation.md).
 
-**CycloneDX** — An OWASP-related BOM standard supported by Joch's ABOM emitter. See [CycloneDX Mapping](../aos/cyclonedx-mapping.md).
+**CycloneDX** — An OWASP-related BOM standard supported by Joch's AgBOM emitter. See [CycloneDX Mapping](../aos/cyclonedx-mapping.md).
 
 ## D
 
@@ -60,7 +60,7 @@ A single source of truth for the vocabulary used across Joch documentation. Wher
 
 ## I
 
-**Inspect** — One of the three AOS pillars: agents publish a current ABOM that auditors and runtime systems can fetch. Implemented in Joch by the ABOM service.
+**Inspect** — One of the three AOS pillars: agents publish a current AgBOM that auditors and runtime systems can fetch. Implemented in Joch by the AgBOM service.
 
 **Instrument** — One of the three AOS pillars: agents expose hooks that a Guardian Agent can use to `allow`, `deny`, or `modify` decisions. Implemented in Joch by the policy engine and the tool / MCP gateways.
 
@@ -98,11 +98,11 @@ A single source of truth for the vocabulary used across Joch documentation. Wher
 
 **Secret** — An external secret reference (Vault, Kubernetes secret, AWS Secrets Manager, env). Joch never stores secret values directly. See [`Secret`](../specs/kubernetes/secret.md).
 
-**SPDX** — A Linux Foundation BOM standard supported by Joch's ABOM emitter.
+**SPDX** — A Linux Foundation BOM standard supported by Joch's AgBOM emitter.
 
 **StateCheckpoint** — A vendor-neutral snapshot of agent state used during provider migration. See [`StateCheckpoint`](../specs/kubernetes/state-checkpoint.md).
 
-**SWID** — A NIST software identification standard supported by Joch's ABOM emitter.
+**SWID** — A NIST software identification standard supported by Joch's AgBOM emitter.
 
 ## T
 

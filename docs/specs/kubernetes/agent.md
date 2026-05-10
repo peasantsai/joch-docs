@@ -67,7 +67,7 @@ spec:
 
   observability:
     tracing: enabled
-    abom: enabled
+    agbom: enabled
     redactSensitiveData: true
 
 status:
@@ -77,7 +77,7 @@ status:
   activeExecutions: 2
   lastRunAt: "2026-05-09T10:30:00Z"
   abomRef:
-    name: support-triage-abom
+    name: support-triage-agbom
 ```
 
 ## Identity vs. execution vs. deployment
@@ -114,6 +114,6 @@ The status subresource captures live state:
 - `framework` — the resolved framework adapter, copied from spec at compile time.
 - `modelRoute` — the resolved model route used by the latest execution.
 - `activeExecutions` — current concurrent runs.
-- `abomRef` — pointer to the latest ABOM. Refreshed on every change to the agent or its dependencies.
+- `abomRef` — pointer to the latest AgBOM. Refreshed on every change to the agent or its dependencies.
 
 [Back to the catalog](index.md)

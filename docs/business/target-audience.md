@@ -8,7 +8,7 @@ Joch is built for organizations operating **more than one agent**, **across more
 |---|---|
 | Mid-size SaaS engineering org | Multiple agents in production across teams; needs cost control, evals, and approvals before customers notice regressions. |
 | Enterprise platform team | Owns the developer experience for AI agent teams; needs a Backstage-style catalog with control-plane teeth. |
-| Regulated industries (financial services, healthcare, public sector) | Needs ABOM, audit, residency controls, and SIEM integration that vendor SDKs do not provide on their own. |
+| Regulated industries (financial services, healthcare, public sector) | Needs AgBOM, audit, residency controls, and SIEM integration that vendor SDKs do not provide on their own. |
 | AI-native products with agent fleets | Needs cross-vendor model routing, MCP governance, and release gates so growth does not regress quality. |
 
 ## Buyer personas
@@ -39,7 +39,7 @@ Owns risk posture. Buys Joch to:
 
 - enforce policy on every external action,
 - keep an immutable audit log of agent decisions,
-- get ABOM and OCSF events for the SIEM,
+- get AgBOM and OCSF events for the SIEM,
 - reduce MCP supply-chain risk.
 
 Pain points: no visibility into agent decisions, MCP server proliferation, lack of agent-specific compliance evidence.
@@ -60,7 +60,7 @@ Uses Joch in their daily flow:
 
 - the **operator** runs `joch get agents`, `joch trace`, `joch top tools`,
 - the **approver** triages `joch approvals ls` from Slack or the console,
-- the **auditor** consumes ABOM, OCSF, and release records in the SIEM and audit workflows.
+- the **auditor** consumes AgBOM, OCSF, and release records in the SIEM and audit workflows.
 
 ## Anti-personas (where Joch is the wrong tool)
 

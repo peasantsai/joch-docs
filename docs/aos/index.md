@@ -14,9 +14,9 @@ Joch's data plane is a faithful AOS implementation. Joch agents emit AgBOMs, exp
 
     ---
 
-    Agents publish a current Agent Bill of Materials (AgBOM) extending CycloneDX, SPDX, and SWID. Joch's [`ABOM`](../specs/kubernetes/abom.md) resource implements this pillar.
+    Agents publish a current Agent Bill of Materials (AgBOM) extending CycloneDX, SPDX, and SWID. Joch's [`AgBOM`](../specs/kubernetes/agbom.md) resource implements this pillar.
 
-    [Read the ABOM page](agbom.md)
+    [Read the AgBOM page](agbom.md)
 
 -   :material-hook: **Instrument**
 
@@ -42,9 +42,9 @@ Per AOS, Joch does not invent new BOM or telemetry standards — it extends indu
 
 | Standard | Joch surface | Status |
 |---|---|---|
-| [CycloneDX](https://cyclonedx.org/) | ABOM emission | full support |
-| [SPDX](https://spdx.dev/) | ABOM emission | full support |
-| [SWID](https://csrc.nist.gov/Projects/Software-Identification-SWID) | ABOM emission | full support |
+| [CycloneDX](https://cyclonedx.org/) | AgBOM emission | full support |
+| [SPDX](https://spdx.dev/) | AgBOM emission | full support |
+| [SWID](https://csrc.nist.gov/Projects/Software-Identification-SWID) | AgBOM emission | full support |
 | [OpenTelemetry](https://opentelemetry.io/) | Trace export | full support |
 | [OCSF](https://ocsf.io/) | Security event export | full support |
 
@@ -82,7 +82,7 @@ These build on the AOS contract; they do not replace it.
 | Standard hooks | [Tool Gateway](../architecture/tool-gateway.md), [MCP Gateway](../architecture/mcp-gateway.md), [Model Router](../architecture/model-router.md), [Memory](../architecture/data-plane.md), [RAG](../architecture/data-plane.md) |
 | `allow` / `deny` / `modify` decisions | [Policy Engine](../architecture/policy-engine.md) |
 | Standardized trace | [`Trace`](../specs/kubernetes/trace.md) + OpenTelemetry / OCSF |
-| Comprehensive AgBOM | [`ABOM`](../specs/kubernetes/abom.md) + CycloneDX / SPDX / SWID |
-| Dynamic AgBOM refresh | [`ABOM.refresh.onChange`](../specs/kubernetes/abom.md) and triggers |
+| Comprehensive AgBOM | [`AgBOM`](../specs/kubernetes/agbom.md) + CycloneDX / SPDX / SWID |
+| Dynamic AgBOM refresh | [`AgBOM.refresh.onChange`](../specs/kubernetes/agbom.md) and triggers |
 | MCP integration | [MCP Gateway](../architecture/mcp-gateway.md) and [`MCPServer`](../specs/kubernetes/mcpserver.md) |
 | A2A integration | [`Handoff`](../specs/kubernetes/handoff.md) and the A2A broker |

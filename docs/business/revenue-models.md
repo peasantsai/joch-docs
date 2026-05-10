@@ -23,7 +23,7 @@ Sufficient for self-hosted production deployments. Independent forks are allowed
 ```text
 Cost:           free for small teams (limit by agents, executions, retention)
 Includes:       hosted multi-tenant control plane, hosted Console,
-                managed traces and ABOM storage, customer-runtime tunnel,
+                managed traces and AgBOM storage, customer-runtime tunnel,
                 community-vetted MCP / tool catalog
 Support:        community + best-effort response
 SLA:            none
@@ -36,7 +36,7 @@ The free tier exists to remove the hosting friction for teams just starting.
 ```text
 Cost:           per-agent monthly + per-execution overage tiers
 Includes:       Starter + SSO/SCIM, RBAC, premium connectors,
-                multi-region trace and ABOM retention up to 90 days,
+                multi-region trace and AgBOM retention up to 90 days,
                 Slack / email approval routing, audit export to SIEM
 Support:        business-hours email + chat
 SLA:            99.9% control plane
@@ -84,8 +84,8 @@ Joch Registry mirror with private repositories
 
 - **Pay for control-plane usage, not for inference.** Inference billing stays with the provider; Joch is a multiplier on operations efficiency, not on token cost.
 - **Charge for agent count and execution scale**, not per seat. The seat model under-counts platforms with many automations and few humans.
-- **No per-feature paywalls in OSS** for things that should be obviously free — basic ABOM, traces, hooks, gateways, and policies are open.
-- **Trace / ABOM retention is a real cost** and is metered explicitly in tiers.
+- **No per-feature paywalls in OSS** for things that should be obviously free — basic AgBOM, traces, hooks, gateways, and policies are open.
+- **Trace / AgBOM retention is a real cost** and is metered explicitly in tiers.
 
 ## Why open-core works here
 

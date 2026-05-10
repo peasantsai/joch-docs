@@ -39,7 +39,7 @@ Runtime
 
 Operations
   Deployment, Environment, Team / Namespace, Budget, Eval,
-  Secret, ABOM
+  Secret, AgBOM
 ```
 
 Identity resources change rarely and govern *what* an agent is. Runtime resources are created per execution and govern *what happened*. Operations resources govern *where, when, by whom, at what cost, and to what standard*.

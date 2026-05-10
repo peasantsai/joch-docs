@@ -59,6 +59,12 @@ theme:
     - toc.follow
 nav:
   - Home: index.md
+  - Get Started:
+      - Overview: getting-started/index.md
+      - Install: getting-started/install.md
+      - First Agent: getting-started/first-agent.md
+      - Govern an MCP Server: getting-started/governing-mcp.md
+      - Onboard from a Vendor SDK: getting-started/migration-from-vendor-sdk.md
   - Concepts:
       - Overview: concepts/index.md
       - Positioning: concepts/positioning.md
@@ -97,7 +103,7 @@ nav:
           - ToolCall: specs/kubernetes/toolcall.md
           - Policy: specs/kubernetes/policy.md
           - Approval: specs/kubernetes/approval.md
-          - ABOM: specs/kubernetes/abom.md
+          - AgBOM: specs/kubernetes/agbom.md
           - Trace: specs/kubernetes/trace.md
           - Execution: specs/kubernetes/execution.md
           - Conversation: specs/kubernetes/conversation.md
@@ -113,14 +119,40 @@ nav:
           - Environment: specs/kubernetes/environment.md
           - Team / Namespace: specs/kubernetes/team-namespace.md
           - Handoff: specs/kubernetes/handoff.md
+  - SDK Integrations:
+      - Overview: integrations/index.md
+      - OpenAI Agents SDK: integrations/openai-agents-sdk.md
+      - Claude Agent SDK: integrations/claude-agent-sdk.md
+      - Google ADK: integrations/google-adk.md
+      - Microsoft Agent Framework: integrations/microsoft-agent-framework.md
+      - LangGraph: integrations/langgraph.md
+      - CrewAI: integrations/crewai.md
+      - Custom Code: integrations/custom-code.md
+  - Providers:
+      - Overview: providers/index.md
+      - OpenAI: providers/openai.md
+      - Anthropic: providers/anthropic.md
+      - Google: providers/google.md
+      - Microsoft Foundry: providers/microsoft.md
+      - Ollama: providers/ollama.md
+      - vLLM: providers/vllm.md
+      - llama.cpp: providers/llama-cpp.md
   - AOS Conformance:
       - Overview: aos/index.md
-      - ABOM (Inspect): aos/agbom.md
+      - AgBOM (Inspect): aos/agbom.md
       - Hooks (Instrument): aos/hooks.md
       - Events (Trace): aos/events.md
+      - Schema Crosswalk: aos/schema-crosswalk.md
       - CycloneDX Mapping: aos/cyclonedx-mapping.md
       - OpenTelemetry Mapping: aos/opentelemetry-mapping.md
       - OCSF Mapping: aos/ocsf-mapping.md
+  - Reference:
+      - Overview: reference/index.md
+      - CLI: reference/cli.md
+      - API: reference/api.md
+      - Configuration: reference/configuration.md
+      - Environment Variables: reference/environment-variables.md
+      - Settings: reference/settings.md
   - Use Cases:
       - Overview: use-cases/index.md
       - Fleet Inventory: use-cases/fleet-inventory.md
@@ -152,6 +184,8 @@ nav:
       - Contributing: community/contributing.md
       - Governance: community/governance.md
       - License: community/license.md
+      - FAQ: community/faq.md
+      - Troubleshooting: community/troubleshooting.md
 plugins:
   - search:
       lang: en

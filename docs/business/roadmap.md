@@ -8,9 +8,9 @@ The Joch roadmap is sequenced by **wedge first, breadth second, compliance third
 - **Tool Gateway with AOS hooks**: `toolCallRequest`, `toolCallResult`, side-effect classification, idempotency, approvals.
 - **Framework adapters**: OpenAI Agents SDK, Claude Agent SDK, custom-python.
 - **Model Router** with `ModelRoute` fallback, OpenAI / Anthropic provider adapters.
-- **ABOM v1**: CycloneDX emission, sign-on-demand, change-triggered refresh.
+- **AgBOM v1**: CycloneDX emission, sign-on-demand, change-triggered refresh.
 - **Trace v1**: OpenTelemetry exporter with GenAI semantic conventions.
-- **CLI**: `joch up`, `apply`, `get`, `describe`, `trace`, `abom`, `mcp`, `approvals`, `cost`.
+- **CLI**: `joch up`, `apply`, `get`, `describe`, `trace`, `agbom`, `mcp`, `approvals`, `cost`.
 - **Helm chart and Compose stack** for first-day install.
 
 ## Next (1–2 quarters out)
@@ -18,10 +18,10 @@ The Joch roadmap is sequenced by **wedge first, breadth second, compliance third
 - **Framework adapters**: Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, custom-typescript.
 - **Provider adapters**: Google, Microsoft Azure / Foundry, Ollama, vLLM, llama.cpp.
 - **Approvals service** with Slack, email, and webhook routing.
-- **SPDX and SWID** ABOM emission.
+- **SPDX and SWID** AgBOM emission.
 - **OCSF** trace exporter for the security event subset.
 - **Eval service** and release gates wired into `joch promote`.
-- **Web Console** for inventory, traces, approvals, ABOM, costs.
+- **Web Console** for inventory, traces, approvals, AgBOM, costs.
 - **Joch Cloud Starter** (free tier) with hosted control plane and customer-runtime tunnel.
 
 ## Later (3+ quarters out)
@@ -63,6 +63,6 @@ To stay sharp:
 - **No proprietary agent loop or planner** that competes with vendor SDKs.
 - **No hosted inference**.
 - **No closed-source forks** of the OSS code path.
-- **No SaaS-only features** that should obviously be in OSS (basic ABOM, traces, hooks, gateways).
+- **No SaaS-only features** that should obviously be in OSS (basic AgBOM, traces, hooks, gateways).
 
 The roadmap is honest by design: a control plane wins by being narrow, deep, and durable, not by sprawling into every adjacent space.

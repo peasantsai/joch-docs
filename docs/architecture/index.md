@@ -12,7 +12,7 @@ Joch is a control plane plus a thin set of data-plane gateways. The control plan
                                 ▼
                      ┌───────────────────────┐
                      │  Joch Control Plane   │  desired state, policy, inventory
-                     │  (apiserver, store,   │  release gates, approvals, ABOM
+                     │  (apiserver, store,   │  release gates, approvals, AgBOM
                      │   policy, scheduler)  │
                      └──────────┬────────────┘
                                 │

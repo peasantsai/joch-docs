@@ -1,12 +1,12 @@
-# ABOM
+# AgBOM
 
-The `ABOM` resource is Joch's per-agent **Agent Bill of Materials**. It implements the OWASP AOS [AgBOM](https://aos.owasp.org/) specification — a dynamic, machine-readable inventory of every component an agent depends on — and emits BOMs in CycloneDX, SPDX, and SWID formats.
+The `AgBOM` resource is Joch's per-agent **Agent Bill of Materials**. It implements the OWASP AOS [AgBOM](https://aos.owasp.org/) specification — a dynamic, machine-readable inventory of every component an agent depends on — and emits BOMs in CycloneDX, SPDX, and SWID formats.
 
 [Back to the catalog](index.md)
 
-## Why ABOM
+## Why AgBOM
 
-ABOM is the **inspect** pillar of OWASP AOS, applied to agents. It answers, for any agent at any time:
+AgBOM is the **inspect** pillar of OWASP AOS, applied to agents. It answers, for any agent at any time:
 
 - What tools, models, memory, RAG sources, and MCP servers does the agent depend on?
 - Who authored each component?
@@ -19,9 +19,9 @@ This visibility is the foundation of supply-chain integrity, security tracing, v
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
-kind: ABOM
+kind: AgBOM
 metadata:
-  name: support-triage-abom
+  name: support-triage-agbom
   namespace: support-platform
   labels:
     agent: support-triage
@@ -40,7 +40,7 @@ spec:
   signing:
     enabled: true
     keyRef:
-      name: joch-abom-signing-key
+      name: joch-agbom-signing-key
 
   components:
     standardPackages: true
@@ -56,29 +56,29 @@ spec:
   exports:
     cyclonedx:
       destinationRef: { name: artifact-store }
-      filenameTemplate: "abom/{{ agent }}/{{ generation }}.cdx.json"
+      filenameTemplate: "agbom/{{ agent }}/{{ generation }}.cdx.json"
     spdx:
       destinationRef: { name: artifact-store }
-      filenameTemplate: "abom/{{ agent }}/{{ generation }}.spdx.json"
+      filenameTemplate: "agbom/{{ agent }}/{{ generation }}.spdx.json"
     swid:
       destinationRef: { name: artifact-store }
-      filenameTemplate: "abom/{{ agent }}/{{ generation }}.swid.xml"
+      filenameTemplate: "agbom/{{ agent }}/{{ generation }}.swid.xml"
 
 status:
   phase: Ready
   generation: 17
   lastGeneratedAt: "2026-05-10T10:00:00Z"
   artifacts:
-    cyclonedxRef: artifact://abom/support-triage/17.cdx.json
-    spdxRef: artifact://abom/support-triage/17.spdx.json
-    swidRef: artifact://abom/support-triage/17.swid.xml
+    cyclonedxRef: artifact://agbom/support-triage/17.cdx.json
+    spdxRef: artifact://agbom/support-triage/17.spdx.json
+    swidRef: artifact://agbom/support-triage/17.swid.xml
   highRiskComponents:
     - kind: MCPServer
       name: legacy-internal
       reason: trustScore-below-threshold
 ```
 
-## What components ABOM tracks
+## What components AgBOM tracks
 
 Per OWASP AgBOM, the following entity classes are tracked:
 
@@ -95,7 +95,7 @@ Joch additionally tracks `Policy` and `FrameworkAdapter` versions because they a
 
 ## Refresh triggers
 
-Per OWASP AgBOM, the ABOM is dynamic. Joch refreshes it when any of the following change:
+Per OWASP AgBOM, the AgBOM is dynamic. Joch refreshes it when any of the following change:
 
 - the agent capability set,
 - an MCP server's discovered tools, resources, or version,
@@ -118,7 +118,7 @@ The `refresh.onChange` flag enables automatic regeneration. `refresh.schedule` a
   "metadata": {
     "timestamp": "2026-05-10T10:00:00Z",
     "tools": [
-      { "name": "joch-abom", "version": "1.0.0" }
+      { "name": "joch-agbom", "version": "1.0.0" }
     ],
     "authors": [
       { "name": "support-platform", "email": "support-platform@example.com" }
@@ -179,7 +179,7 @@ The `refresh.onChange` flag enables automatic regeneration. `refresh.schedule` a
     }
   ],
   "signatures": [
-    { "value": "<base64>", "keyId": "joch-abom-signing-key" }
+    { "value": "<base64>", "keyId": "joch-agbom-signing-key" }
   ]
 }
 ```
@@ -187,15 +187,15 @@ The `refresh.onChange` flag enables automatic regeneration. `refresh.schedule` a
 ## Operator commands
 
 ```bash
-joch abom support-triage
-joch abom support-triage --format cyclonedx > support-triage.cdx.json
-joch abom support-triage --format spdx > support-triage.spdx.json
-joch abom support-triage --format swid > support-triage.swid.xml
-joch abom support-triage --diff --from 16 --to 17
-joch abom ls --high-risk
+joch agbom support-triage
+joch agbom support-triage --format cyclonedx > support-triage.cdx.json
+joch agbom support-triage --format spdx > support-triage.spdx.json
+joch agbom support-triage --format swid > support-triage.swid.xml
+joch agbom support-triage --diff --from 16 --to 17
+joch agbom ls --high-risk
 ```
 
-The `--high-risk` filter surfaces agents whose ABOM contains components below trust thresholds, with unpinned MCP servers, or with policy violations.
+The `--high-risk` filter surfaces agents whose AgBOM contains components below trust thresholds, with unpinned MCP servers, or with policy violations.
 
 ## Standards alignment
 

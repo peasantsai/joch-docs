@@ -51,7 +51,7 @@ status:
   artifactRefs:
     - artifact://exec/exec-20260510-001/draft-reply.md
   traceRef: { name: trace-exec-20260510-001 }
-  abomSnapshotRef: { name: support-triage-abom, generation: 17 }
+  abomSnapshotRef: { name: support-triage-agbom, generation: 17 }
 ```
 
 ## Trigger types
@@ -65,9 +65,9 @@ upstream        triggered by another agent's Handoff
 
 The trigger maps to an [AOS `agentTrigger` hook](../../aos/hooks.md), so the policy engine can `allow`, `deny`, or `modify` the triggering payload before the execution starts.
 
-## ABOM snapshot
+## AgBOM snapshot
 
-`status.abomSnapshotRef` pins the ABOM generation that was active when the execution started. This makes the execution reproducible: the exact set of tools, MCP servers, models, and policies in effect is recoverable years later.
+`status.abomSnapshotRef` pins the AgBOM generation that was active when the execution started. This makes the execution reproducible: the exact set of tools, MCP servers, models, and policies in effect is recoverable years later.
 
 ## Cost and budget
 
@@ -75,7 +75,7 @@ The trigger maps to an [AOS `agentTrigger` hook](../../aos/hooks.md), so the pol
 
 ## Replay
 
-Executions are replayable from the trace plus the ABOM snapshot. Replay is gated by policy because it may produce duplicate side effects.
+Executions are replayable from the trace plus the AgBOM snapshot. Replay is gated by policy because it may produce duplicate side effects.
 
 ```bash
 joch executions replay exec-20260510-001 --policy strict

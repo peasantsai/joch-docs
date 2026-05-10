@@ -39,7 +39,7 @@ ops.joch.dev
   Trace
   Eval
   Artifact
-  ABOM
+  AgBOM
   Secret
 ```
 
@@ -53,7 +53,7 @@ ExecutionController          materializes a Job + worker, watches for completion
 DeploymentController         maintains the desired replica count and rollout strategy
 PolicyController             distributes compiled policies to the policy engine
 MCPDiscoveryController       refreshes MCPServer.status.discoveredTools
-ABOMController               regenerates ABOM on dependency changes
+AgBOMController              regenerates AgBOM on dependency changes
 EvalController               runs Evals on schedule and on promotion
 ApprovalController           routes approval requests; records decisions
 BudgetController             tracks cost and enforces caps

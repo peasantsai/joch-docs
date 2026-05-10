@@ -21,7 +21,7 @@ Model                                    StateCheckpoint        Team / Namespace
 ModelRoute                               ToolCall               Budget
 Tool                                     Approval               Eval
 MCPServer                                Handoff                Secret
-Memory                                   Trace                  ABOM
+Memory                                   Trace                  AgBOM
 RAG                                      Artifact
 KnowledgeSource
 Policy
@@ -32,7 +32,7 @@ The minimum useful v1 set:
 ```text
 Agent, FrameworkAdapter, Model, ModelRoute, Tool, MCPServer,
 Policy, Approval, ToolCall, Trace, Conversation, StateCheckpoint,
-Memory, RAG, ABOM, Execution, Deployment, Eval, Environment, Team / Namespace
+Memory, RAG, AgBOM, Execution, Deployment, Eval, Environment, Team / Namespace
 ```
 
 The rest can land later without breaking schemas.
@@ -112,7 +112,7 @@ ops.joch.dev/v1alpha1
   Trace
   Eval
   Artifact
-  ABOM
+  AgBOM
   Secret
 ```
 
@@ -132,7 +132,7 @@ Deployment
         │     └── KnowledgeSources
         ├── Policies
         ├── Budgets
-        └── ABOM (derived)
+        └── AgBOM (derived)
 
 Execution
   ├── Agent
@@ -201,7 +201,7 @@ Desired state    Agent, FrameworkAdapter, Model, ModelRoute, Tool, MCPServer,
 Runtime state    Execution, Conversation, StateCheckpoint, ToolCall, Handoff,
                  Approval, Trace, Artifact
 
-Operations       Budget, Eval, ABOM, Team, Secret
+Operations       Budget, Eval, AgBOM, Team, Secret
 ```
 
 The design philosophy:

@@ -76,7 +76,7 @@ ApprovalDenied              an approval was denied
 A2AMessageSent              an outbound A2A message was sent
 A2AMessageReceived          an inbound A2A message was received
 ProviderSwitched            a conversation switched providers
-ABOMUpdated                 the per-agent ABOM was refreshed
+AgBOMUpdated                 the per-agent AgBOM was refreshed
 ExecutionSucceeded          execution completed successfully
 ExecutionFailed             execution failed
 BudgetExceeded              a budget was exceeded
@@ -92,7 +92,7 @@ See [OpenTelemetry Mapping](../../aos/opentelemetry-mapping.md).
 
 ## OCSF mapping
 
-Security-relevant events (policy denials, approvals, A2A messages, ABOM updates, hook decisions) emit OCSF-compatible records using `Application Activity` (8001) and `Process Activity` (1003) event classes by default.
+Security-relevant events (policy denials, approvals, A2A messages, AgBOM updates, hook decisions) emit OCSF-compatible records using `Application Activity` (8001) and `Process Activity` (1003) event classes by default.
 
 See [OCSF Mapping](../../aos/ocsf-mapping.md).
 

@@ -2,14 +2,14 @@
 
 Documentation site for **[Joch](https://peasantsai.github.io/joch-docs/)** — the vendor-neutral control plane for AI agent fleets.
 
-Joch operates agents built with OpenAI Agents SDK, Claude Agent SDK, Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, or custom code. It owns the inventory, governance, portability, observability, and release lifecycle that vendor SDKs leave to operators, and it implements the [OWASP Agent Observability Standard](https://aos.owasp.org/) for ABOM, hooks, and trace.
+Joch operates agents built with OpenAI Agents SDK, Claude Agent SDK, Google ADK, Microsoft Agent Framework, LangGraph, CrewAI, or custom code. It owns the inventory, governance, portability, observability, and release lifecycle that vendor SDKs leave to operators, and it implements the [OWASP Agent Observability Standard](https://aos.owasp.org/) for AgBOM, hooks, and trace.
 
 ## Site contents
 
 - **Concepts** — positioning, the five pillars, comparison vs vendor SDKs, glossary.
 - **Pillars** — inventory, governance, portability, observability, release management.
 - **Architecture** — control plane, data plane, framework adapters, tool gateway, MCP gateway, model router, policy engine, state portability, trust model.
-- **Resources** — the Kubernetes-style YAML resource catalog (`Agent`, `FrameworkAdapter`, `Tool`, `MCPServer`, `Policy`, `ABOM`, `Trace`, `ModelRoute`, and the rest).
+- **Resources** — the Kubernetes-style YAML resource catalog (`Agent`, `FrameworkAdapter`, `Tool`, `MCPServer`, `Policy`, `AgBOM`, `Trace`, `ModelRoute`, and the rest).
 - **AOS Conformance** — AgBOM, hooks, events, and the CycloneDX / OpenTelemetry / OCSF mappings.
 - **Use Cases** — fleet inventory, MCP governance, cross-provider migration, cost control, release gates, approvals.
 - **Business** — product, moat, competitive landscape, revenue models, target audience, go-to-market, open-core strategy, roadmap.
