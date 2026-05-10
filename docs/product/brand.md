@@ -1,113 +1,78 @@
 # Brand
 
-# **joch**
-Meaning:
-A Joch is the wooden frame used to bind and guide oxen or draft animals so they can pull together.
+## Name
 
-Product metaphor:
+**Joch** — pronounced */jok/*. A Joch (or yoke) is the wooden frame used to bind and guide draft animals so they pull together. The product metaphor is direct: Joch harnesses AI agents into coordinated working fleets.
 
-Tagline:
-> **joch: Joch harnesses AI agents into coordinated working fleets.**
+## Tagline
 
-That maps cleanly to our product:
+> **Joch — the vendor-neutral control plane for AI agent fleets.**
 
-```text
-joch agents
-joch models
-joch skills
-joch memories
-joch executions
-joch deployments
-```
-
-It is also more brandable than `joch`, which sounds like a utility command rather than a platform.
-
-CLI:
-
-```bash
-joch get agents
-joch run researcher "Analyze this repo"
-joch apply -f agent.yaml
-joch trace exec-123
-joch approvals ls
-```
-
-Kubernetes-style alias, optional:
-
-```bash
-jochctl get agents
-```
-
-But I would make the primary command:
-
-```bash
-joch
-```
-
-Cleaner, memorable, less derivative.
-
----
-
-# Brand architecture
+## Brand architecture
 
 ```text
-Company / org:     Peasants AI
-Product:           joch
-CLI:               joch
-Cloud:             joch Cloud
-Runtime:           joch Runtime
-Kubernetes:        joch Operator
-Specs:             joch Specs
-Registry:          joch Registry
+Company / org      PeasantsAI
+Product            Joch
+CLI                joch
+Cloud              Joch Cloud
+Enterprise         Joch Enterprise
+Registry           Joch Registry
+Marketplace        Joch Marketplace
+Console            Joch Console
+Operator           Joch Operator
 ```
 
-Domain-style naming if we later need it:
+Domain naming, in priority order:
 
 ```text
-joch.dev
-joch.run
-joch.ai
+joch.dev      primary
+joch.run      reserved
+joch.ai       reserved
+peasantsai.io company / org
 ```
 
-API group:
-
-```yaml
-apiVersion: joch.peasants.ai/v1alpha1
-kind: Agent
-```
-
-or cleaner:
+## API group
 
 ```yaml
 apiVersion: joch.dev/v1alpha1
 kind: Agent
 ```
 
----
+The `joch.dev` API group is short, recognizable, and aligned with the brand.
 
-# Other good names
+## CLI surface
 
-If we want alternatives before committing:
-
-| Name        | CLI       | Feel                                                   |
-| ----------- | --------- | ------------------------------------------------------ |
-| **joch**  | `joch`  | Fleet assembly, strong, memorable                      |
-| **Yoke**    | `yoke`    | Control/coordination, short, unusual                   |
-| **Flock**   | `flock`   | Multi-agent swarm/fleet, friendly                      |
-| **Field**   | `field`   | Peasants AI theme, broad platform feel                 |
-| **Acre**    | `acre`    | Infrastructure/territory metaphor                      |
-| **Tiller**  | `tiller`  | Cultivation/control, but Helm had old “Tiller” baggage |
-| **Herd**    | `herd`    | Agent fleet, direct but less polished                  |
-| **Orchard** | `orchard` | Grows/cultivates agents, softer                        |
-| **Mason**   | `mason`   | Builds agent systems                                   |
-| **Forge**   | `forge`   | Builds/deploys agents, common but strong               |
-
-My pick remains:
-
-```text
-joch
+```bash
+joch up
+joch apply -f agent.yaml
+joch get agents
+joch describe agent support-triage
+joch run support-triage "Triage incoming queue"
+joch trace exec-20260510-001
+joch approvals ls
+joch mcp ls
+joch abom support-triage
+joch promote support-triage --from staging --to prod
+joch cost by-team --since 7d
 ```
 
-It is short, command-like, and directly communicates “manage the fleet.”
+A Kubernetes-style alias `jochctl` is reserved for users who prefer that convention; the canonical command is `joch`.
 
----
+## Voice
+
+- Operator-grade: write for the platform engineer, the security engineer, the ML engineer in the trenches.
+- Specific over abstract: prefer "tool calls flow through the gateway" over "agents are governed."
+- Honest about scope: state what Joch is and is not. The [positioning](../concepts/positioning.md) page is the canonical reference.
+
+## What we are not
+
+- We are not a model provider.
+- We are not an agent SDK.
+- We are not a notebook or playground.
+- We do not fork or replace the SDKs our customers use.
+
+When in doubt, the operator-language test applies: would a senior platform engineer recognize this sentence as something they would write in a runbook? If not, simplify.
+
+## Trademark
+
+**Joch**, **Joch Cloud**, **Joch Enterprise**, **Joch Console**, **Joch Operator**, **Joch Registry**, and **Joch Marketplace** are trademarks of PeasantsAI. Forks of the open-source project are allowed under Apache-2.0; they may not use these names in branding or marketing.
