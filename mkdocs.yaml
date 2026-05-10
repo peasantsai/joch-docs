@@ -1,5 +1,5 @@
-site_name: Joch AI
-site_description: Joch AI is the open MCP and tool-governance gateway for discovering, governing, approving, and auditing autonomous agent workforces.
+site_name: Joch
+site_description: Joch is the vendor-neutral control plane for AI agent fleets — inventory, governance, portability, observability, and release management for agents built with any SDK.
 site_url: https://peasantsai.github.io/joch-docs/
 repo_url: https://github.com/peasantsai/joch-docs
 repo_name: peasantsai/joch-docs
@@ -10,7 +10,7 @@ theme:
   name: material
   language: en
   icon:
-    logo: material/shield-check-outline
+    logo: material/robot-outline
     repo: fontawesome/brands/github
     edit: material/pencil
     view: material/eye
@@ -63,48 +63,129 @@ nav:
       - Overview: getting-started/index.md
       - Install: getting-started/install.md
       - First Agent: getting-started/first-agent.md
-      - Govern MCP: getting-started/governing-mcp.md
-  - Strategy:
-      - Overview: strategy/index.md
-      - Brand: strategy/brand.md
-      - Positioning: strategy/positioning.md
-      - Market Context: strategy/market.md
-      - Business Model: strategy/business.md
-      - Open Source Strategy: strategy/open-source.md
-  - MVP:
-      - Overview: mvp/index.md
-      - Scope: mvp/scope.md
-      - User Stories: mvp/user-stories.md
-      - Roadmap: mvp/roadmap.md
-      - Success Metrics: mvp/success-metrics.md
+      - Govern an MCP Server: getting-started/governing-mcp.md
+      - Onboard from a Vendor SDK: getting-started/migration-from-vendor-sdk.md
+  - Concepts:
+      - Overview: concepts/index.md
+      - Positioning: concepts/positioning.md
+      - Five Pillars: concepts/five-pillars.md
+      - Comparison: concepts/comparison.md
+      - Glossary: concepts/glossary.md
+  - Pillars:
+      - Inventory: pillars/inventory.md
+      - Governance: pillars/governance.md
+      - Portability: pillars/portability.md
+      - Observability: pillars/observability.md
+      - Release Management: pillars/release-management.md
   - Architecture:
       - Overview: architecture/index.md
-      - Services: architecture/services.md
-      - Gateway: architecture/gateway.md
-      - Policy and Approvals: architecture/policy-approvals.md
-      - Data Model: architecture/data-model.md
-      - Deployment: architecture/deployment.md
-      - Integrations: architecture/integrations.md
+      - Control Plane: architecture/control-plane.md
+      - Data Plane: architecture/data-plane.md
+      - Framework Adapters: architecture/framework-adapters.md
+      - Tool Gateway: architecture/tool-gateway.md
+      - MCP Gateway: architecture/mcp-gateway.md
+      - State Portability: architecture/state-portability.md
+      - Policy Engine: architecture/policy-engine.md
+      - Model Router: architecture/model-router.md
+      - Trust and Security Model: architecture/trust-and-security-model.md
+      - Service Architecture: architecture/service-architecture.md
   - Resources:
-      - Overview: resources/index.md
-      - Agent: resources/agent.md
-      - Tool: resources/tool.md
-      - MCPServer: resources/mcpserver.md
-      - Policy: resources/policy.md
-      - ToolCall: resources/toolcall.md
-      - Approval: resources/approval.md
-      - ABOM: resources/abom.md
-      - Execution: resources/execution.md
-      - TraceEvent: resources/trace-event.md
+      - Overview: specs/index.md
+      - Resource Model: specs/resource-model.md
+      - Catalog:
+          - Index: specs/kubernetes/index.md
+          - Agent: specs/kubernetes/agent.md
+          - FrameworkAdapter: specs/kubernetes/framework-adapter.md
+          - Model: specs/kubernetes/model.md
+          - ModelRoute: specs/kubernetes/model-route.md
+          - Tool: specs/kubernetes/tool.md
+          - MCPServer: specs/kubernetes/mcpserver.md
+          - ToolCall: specs/kubernetes/toolcall.md
+          - Policy: specs/kubernetes/policy.md
+          - Approval: specs/kubernetes/approval.md
+          - AgBOM: specs/kubernetes/agbom.md
+          - Trace: specs/kubernetes/trace.md
+          - Execution: specs/kubernetes/execution.md
+          - Conversation: specs/kubernetes/conversation.md
+          - StateCheckpoint: specs/kubernetes/state-checkpoint.md
+          - Memory: specs/kubernetes/memory.md
+          - RAG: specs/kubernetes/rag.md
+          - KnowledgeSource: specs/kubernetes/knowledge-source.md
+          - Artifact: specs/kubernetes/artifact.md
+          - Secret: specs/kubernetes/secret.md
+          - Budget: specs/kubernetes/budget.md
+          - Eval: specs/kubernetes/eval.md
+          - Deployment: specs/kubernetes/deployment.md
+          - Environment: specs/kubernetes/environment.md
+          - Team / Namespace: specs/kubernetes/team-namespace.md
+          - Handoff: specs/kubernetes/handoff.md
+  - SDK Integrations:
+      - Overview: integrations/index.md
+      - OpenAI Agents SDK: integrations/openai-agents-sdk.md
+      - Claude Agent SDK: integrations/claude-agent-sdk.md
+      - Google ADK: integrations/google-adk.md
+      - Microsoft Agent Framework: integrations/microsoft-agent-framework.md
+      - LangGraph: integrations/langgraph.md
+      - CrewAI: integrations/crewai.md
+      - Custom Code: integrations/custom-code.md
+  - Providers:
+      - Overview: providers/index.md
+      - OpenAI: providers/openai.md
+      - Anthropic: providers/anthropic.md
+      - Google: providers/google.md
+      - Microsoft Foundry: providers/microsoft.md
+      - Ollama: providers/ollama.md
+      - vLLM: providers/vllm.md
+      - llama.cpp: providers/llama-cpp.md
+  - AOS Conformance:
+      - Overview: aos/index.md
+      - AgBOM (Inspect): aos/agbom.md
+      - Hooks (Instrument): aos/hooks.md
+      - Events (Trace): aos/events.md
+      - Schema Crosswalk: aos/schema-crosswalk.md
+      - CycloneDX Mapping: aos/cyclonedx-mapping.md
+      - OpenTelemetry Mapping: aos/opentelemetry-mapping.md
+      - OCSF Mapping: aos/ocsf-mapping.md
   - Reference:
       - Overview: reference/index.md
       - CLI: reference/cli.md
       - API: reference/api.md
-      - Repositories: reference/repositories.md
+      - Configuration: reference/configuration.md
+      - Environment Variables: reference/environment-variables.md
+      - Settings: reference/settings.md
+  - Use Cases:
+      - Overview: use-cases/index.md
+      - Fleet Inventory: use-cases/fleet-inventory.md
+      - MCP Governance: use-cases/mcp-governance.md
+      - Cross-Provider Migration: use-cases/cross-provider-migration.md
+      - Cost Control: use-cases/cost-control.md
+      - Release Gates: use-cases/release-gates.md
+      - Approvals: use-cases/approvals.md
+  - Business:
+      - Overview: business/index.md
+      - Product: business/product.md
+      - Moat: business/moat.md
+      - Competitive Landscape: business/competitive-landscape.md
+      - Revenue Models: business/revenue-models.md
+      - Target Audience: business/target-audience.md
+      - Go-To-Market: business/go-to-market.md
+      - Open-Core Strategy: business/open-core.md
+      - Roadmap: business/roadmap.md
+  - Platform:
+      - Overview: platform/index.md
+      - Kubernetes Role: platform/kubernetes.md
+      - CRDs and Controllers: platform/crds-controllers.md
+      - Deployment Modes: platform/deployment-modes.md
+      - Product Strategy: platform/product-strategy.md
+  - Product:
+      - Brand: product/brand.md
+      - Repository Strategy: product/repositories.md
   - Community:
       - Contributing: community/contributing.md
+      - Governance: community/governance.md
       - License: community/license.md
       - FAQ: community/faq.md
+      - Troubleshooting: community/troubleshooting.md
 plugins:
   - search:
       lang: en
@@ -141,5 +222,5 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/peasantsai/joch-docs
-      name: Joch AI on GitHub
-copyright: Copyright (c) 2026 PeasantsAI. Joch AI is open source under Apache-2.0.
+      name: Joch on GitHub
+copyright: Copyright &copy; 2026 PeasantsAI &mdash; Joch is open source under Apache-2.0
