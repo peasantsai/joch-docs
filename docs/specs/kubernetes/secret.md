@@ -6,7 +6,7 @@ Kubernetes-style YAML resource specification for Joch `Secret` resources.
 
 ## Secret spec
 
-we can either wrap Kubernetes secrets or define our own reference object.
+Joch can either wrap Kubernetes secrets or define its own reference object.
 
 ```yaml
 apiVersion: joch.dev/v1alpha1

@@ -30,7 +30,7 @@ spec:
     auditRequired: true
 ```
 
-This lets we do:
+This enables commands like:
 
 ```bash
 joch deploy research-agent --env prod-eu

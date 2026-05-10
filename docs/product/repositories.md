@@ -158,7 +158,7 @@ Admission webhooks
 Cluster installation
 ```
 
-we can start this inside `joch`, then split later when Kubernetes support becomes substantial.
+Start this inside `joch`, then split it later when Kubernetes support becomes substantial.
 
 ---
 
@@ -183,7 +183,7 @@ Package:
 @joch/sdk
 ```
 
-or under our org:
+Or under the organization:
 
 ```text
 @peasantsai/joch
@@ -332,7 +332,7 @@ secrets/
   aws-secrets-manager/
 ```
 
-we can also keep these in the main repo at first and split later.
+These can also stay in the main repo at first, then split later.
 
 ---
 
@@ -785,4 +785,4 @@ Later:
   cloud
 ```
 
-That gives we a serious brand, a clean repo system, and room to grow into a real ecosystem.
+That gives Joch a serious brand, a clean repo system, and room to grow into a real ecosystem.

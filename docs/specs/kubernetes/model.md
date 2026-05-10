@@ -69,7 +69,7 @@ status:
   latencyP95Ms: 2800
 ```
 
-we will want model capability matching for commands like:
+Joch will need model capability matching for commands like:
 
 ```bash
 joch run research-agent --model claude-sonnet

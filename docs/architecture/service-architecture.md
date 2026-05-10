@@ -612,7 +612,7 @@ Same CLI. Same resource model.
 
 # 9. Kubernetes integration options
 
-we have two good ways to consume from Kubernetes.
+There are two good ways to consume Kubernetes.
 
 ## Option 1: Kubernetes as runtime only
 
@@ -643,7 +643,7 @@ Cons:
 
 ```text
 Kubernetes users cannot manage everything with kubectl directly
-Need our own API server
+Requires its own API server
 ```
 
 ---
@@ -1155,7 +1155,7 @@ spec:
 
   prompt:
     system: |
-      we are a pragmatic research agent...
+      You are a pragmatic research agent...
     personalityChecksum: sha256:abc123
 
   tools:

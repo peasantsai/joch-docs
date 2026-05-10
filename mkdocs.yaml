@@ -96,7 +96,12 @@ nav:
           - Conversation: specs/kubernetes/conversation.md
           - StateCheckpoint: specs/kubernetes/state-checkpoint.md
   - Platform:
-      - Kubernetes Strategy: platform/kubernetes.md
+      - Overview: platform/index.md
+      - Kubernetes Role: platform/kubernetes.md
+      - Joch Control Plane: platform/control-plane.md
+      - CRDs and Controllers: platform/crds-controllers.md
+      - Deployment Modes: platform/deployment-modes.md
+      - Product Strategy: platform/product-strategy.md
   - Product:
       - Brand: product/brand.md
       - Repository Strategy: product/repositories.md

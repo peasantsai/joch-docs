@@ -6,7 +6,7 @@ Kubernetes-style YAML resource specification for Joch `ExecutionLoop` resources.
 
 ## ExecutionLoop spec
 
-This is one we specifically mentioned, and it deserves its own resource.
+Execution loops deserve their own resource because they define how an agent observes, reasons, acts, reflects, and stops.
 
 ```yaml
 apiVersion: joch.dev/v1alpha1

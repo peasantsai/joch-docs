@@ -39,7 +39,7 @@ status:
     guardrailChecks: 6
 ```
 
-we may also want `Event` as a lower-level append-only primitive.
+Joch may also need `Event` as a lower-level append-only primitive.
 
 ---
 

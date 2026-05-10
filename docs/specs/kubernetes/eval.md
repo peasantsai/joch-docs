@@ -6,7 +6,7 @@ Kubernetes-style YAML resource specification for Joch `Eval` resources.
 
 ## Eval spec
 
-we need evals to prevent silent regressions.
+Joch needs evals to prevent silent regressions.
 
 ```yaml
 apiVersion: joch.dev/v1alpha1

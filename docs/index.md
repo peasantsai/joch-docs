@@ -22,13 +22,13 @@ Joch is an agent control-plane concept: it owns agent identity, lifecycle, memor
 
     [Explore the specs](specs/index.md)
 
--   :material-kubernetes: **Kubernetes Strategy**
+-   :material-kubernetes: **Platform Strategy**
 
     ---
 
     Explain where Kubernetes should sit underneath Joch and why raw Kubernetes should not become the product abstraction.
 
-    [Review the platform model](platform/kubernetes.md)
+    [Review the platform model](platform/index.md)
 
 -   :material-server-network: **Service Architecture**
 

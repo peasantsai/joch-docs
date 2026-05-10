@@ -18,8 +18,8 @@ spec:
   templateEngine: handlebars
 
   template: |
-    we are {{agent.displayName}}.
-    our task is to help with {{task.domain}}.
+    You are {{agent.displayName}}.
+    Your task is to help with {{task.domain}}.
     Follow these policies:
     {{#each policies}}
     - {{this}}
@@ -36,7 +36,7 @@ spec:
     requireCitations: true
 ```
 
-we may also want:
+Joch may also need:
 
 ```text
 PromptPack

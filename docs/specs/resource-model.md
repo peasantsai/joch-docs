@@ -56,7 +56,7 @@ status:
   observedGeneration: number
 ```
 
-This gives we a common control-plane model for agents, models, memories, tools, deployments, and runtime state.
+This gives Joch a common control-plane model for agents, models, memories, tools, deployments, and runtime state.
 
 MCP should strongly influence the design: its official primitives include **tools**, **resources**, and **prompts**, with tools exposing callable functions and resources exposing context/data by URI. ([Model Context Protocol][1]) OpenAI’s Agents SDK also treats tools, handoffs, guardrails, tracing, and sessions as first-class orchestration concepts, which map well into `joch` resources. ([OpenAI GitHub][2])
 
@@ -224,9 +224,9 @@ joch get deployments
 
 ---
 
-## What we missed
+## Additional resources
 
-we already listed most of the obvious resources. I would add these:
+The obvious resources are already listed. I would add these:
 
 ```text
 Prompt

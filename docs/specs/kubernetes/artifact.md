@@ -38,6 +38,6 @@ status:
   phase: Ready
 ```
 
-Artifacts give we reproducibility and auditability.
+Artifacts give Joch reproducibility and auditability.
 
 ---
